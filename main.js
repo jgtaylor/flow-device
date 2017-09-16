@@ -1,8 +1,7 @@
-/* eslint-disable no-console */
 const VERSION = "1.72n",
 	w = require("Wifi"),
-	SSID = "X11",
-	ssidPassword = "secret99",
+	SSID = "Lissabon",
+	ssidPassword = "neues-netz54",
 	wemos = {
 		D0: "",
 		D1: D5,
@@ -70,12 +69,11 @@ function dimmer(pin, value) {
 
 function virtual(pin, cmd) {
 	switch (cmd) {
-	case "read": {
+	case "read":
 		let x = pin().read().toString();
 		ws.send(x);
 		break;
-	}
-	case "readCont": {
+	case "readCont":
             // set a timeout of 5 mins.
 		let thisRead = setInterval(() => {
 			let x = pin().read().toString();
@@ -89,15 +87,15 @@ function virtual(pin, cmd) {
 			clearTimeout(thisTimeout);
 		});
 		break;
-	}
-	default: {
+	default:
 		break;
-	}
+
 	}
 }
 
 function connect() {
-	w.on("disconnected", () => {
+	w.on("connected", (details) => {});
+	w.on("disconnected", (details) => {
 		w.connect(SSID, {
 			password: ssidPassword
 		}, function(error) {
@@ -116,33 +114,26 @@ function msgParse(msg) {
 		}
 	};
 	switch (m[0]) {
-	case "cmd": {
+	case "cmd":
 		let d = device(configMap);
 		switch (d.type) {
-		case "button": {
+		case "button":
 			button(d.pin, m[1].cmd);
 			break;
-		}
-		case "virtual": {
+		case "virtual":
 			virtual(d.pin, m[1].cmd);
 			break;
-		}
-		case "dimmer": {
+		case "dimmer":
 			dimmer(d.pin, m[1].cmd);
 			break;
-		}
-		default: {
+		default:
 			break;
 		}
-		}
 		break;
-	}
-	case "config": {
+	case "config":
 		break;
-	}
-	default: {
+	default:
 		break;
-	}
 	}
 }
 
@@ -152,7 +143,7 @@ function wsconnect(state) {
 		ws.removeAllListeners();
 		ws = null;
 	}
-	ws = new WebSocket("192.168.0.5", {
+	ws = new WebSocket("10.30.1.224", {
 		path: "/ws/josh",
 		port: 1880,
 		origin: "MCU",
