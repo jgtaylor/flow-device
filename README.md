@@ -22,6 +22,14 @@ Connects to wifi access point.
 function msgParse(msg) {}
 ```
 Parses any messages recieved from the server via the websocket. Messages are defined somewhere.
+message format should look something like:
+```json
+[ "cmd", { "device": "dccbaa81-b2e4-46e4-a2f4-84d398dd86e3", "cmd": "readCont"}]
+```
+the device is setup in the `const` declarations at the begining of main.js.
+the array is a "packet". index 0 defines what type of packet. there are cmd and config packets.
+this command packet is for a specific device. the wemos can have multiple devices, this ensure the correct device is selected.
+for a virtual devices, (i2c, etc.), the `cmd: "readCont"` should should be a method of the virtual object. For pwm, the `cmd:` should be a value 0-99, and for button, it should be either 'on' or 'off'. Or, define additional methods in the button object, and you can call them. 
 ```javascript
 function wsconnect(state) {}
 ```
