@@ -1,4 +1,4 @@
-const VERSION = "1.72n",
+const VERSION = "1.73",
 	ESP = require( "ESP8266" ),
 	w = require( "Wifi" ),
 	SSID = "X11",
