@@ -183,8 +183,10 @@ function wsconnect( state ) {
 	} );
 	ws.on( "open", () => {
 		ws.send( JSON.stringify( [ "config", configGen( configMap )] ) );
+		console.log("[SUCCESS] WebSocket connected.")
 	} );
 	ws.on( "close", () => {
+		console.log("[ERROR] WebSocket closed - reconnecting...");
 		wsconnect( 1 );
 	} );
 	ws.on( "message", ( msg ) => {
