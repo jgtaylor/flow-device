@@ -67,7 +67,6 @@ function button( d, cmd ) {
 			state: 0
 		} ];
 		ws.send( JSON.stringify( retMsg ) );
-		console.log( "Write: " + pin + " cmd: 'on'" );
 		break;
 	}
 	case "off":
@@ -78,12 +77,14 @@ function button( d, cmd ) {
 			state: 1
 		} ];
 		ws.send( JSON.stringify( retMsg ) );
-		console.log( "Write: " + d.pin + " cmd: 'off'" );
 		break;
 	}
 	case "getState":
 	{
-		ws.send( d.pin.getMode() );
+		ws.send( JSON.stringify( [ "state", {
+			mode: d.pin.getMode(),
+			value: digitalRead( d.pin )
+		} ] ) );
 		break;
 	}
 	default:
@@ -154,7 +155,6 @@ function msgParse( msg ) {
 			}
 		}
 	};
-	console.log( "msg: " + m );
 	switch ( m[ 0 ] ) {
 	case "cmd":
 	{
@@ -163,19 +163,16 @@ function msgParse( msg ) {
 		case "button":
 		{
 			button( d, m[ 1 ].cmd );
-			console.log( d );
 			break;
 		}
 		case "virtual":
 		{
 			virtual( d, m[ 1 ].cmd );
-			console.log( d );
 			break;
 		}
 		case "dimmer":
 		{
 			dimmer( d, m[ 1 ].cmd );
-			console.log( d );
 			break;
 		}
 		default:
