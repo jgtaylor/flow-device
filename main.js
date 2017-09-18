@@ -1,7 +1,8 @@
-const VERSION = "1.72n",
-	w = require("Wifi"),
-	SSID = "Lissabon",
-	ssidPassword = "neues-netz54",
+const VERSION = "1.73",
+	ESP = require( "ESP8266" ),
+	w = require( "Wifi" ),
+	SSID = "X11",
+	ssidPassword = "secret99",
 	wemos = {
 		D0: "",
 		D1: D5,
@@ -15,12 +16,12 @@ const VERSION = "1.72n",
 	configMap = [{
 		id: "dccbaa81-b2e4-46e4-a2f4-84d398dd86e3",
 		pin: () => {
-			I2C1.setup({
+			I2C1.setup( {
 				scl: D5,
 				sda: D4
-			});
-			var lux = require("BH1750").connect(I2C1);
-			lux.start(1);
+			} );
+			var lux = require( "BH1750" ).connect( I2C1 );
+			lux.start( 1 );
 			return lux;
 		},
 		type: "virtual",
@@ -38,55 +39,55 @@ const VERSION = "1.72n",
 			usage: "Mains Relay"
 		}
 	}],
-	WebSocket = require("ws");
+	WebSocket = require( "ws" );
 var ws = {};
 
-function configGen(config) {
+function configGen( config ) {
 	let ret = [];
-	config.forEach((el) => {
+	config.forEach( ( el ) => {
 		let t = {
 			device: el.id,
 			type: el.type,
 			validCmds: el.validCmds,
 			meta: el.meta
 		};
-		ret.push(t);
-	});
+		ret.push( t );
+	} );
 	return ret;
 }
 
-function button(pin, cmd) {
-	if (cmd === "on") {
-		digitalWrite(pin, 0);
-	} else if (cmd === "off") {
-		digitalWrite(pin, 1);
+function button( pin, cmd ) {
+	if ( cmd === "on" ) {
+		digitalWrite( pin, 0 );
+	} else if ( cmd === "off" ) {
+		digitalWrite( pin, 1 );
 	}
 }
 
-function dimmer(pin, value) {
-	analogWrite(pin, value);
+function dimmer( pin, value ) {
+	analogWrite( pin, value );
 }
 
-function virtual(pin, cmd) {
-	switch (cmd) {
-	case "read":
+function virtual( pin, cmd ) {
+	switch ( cmd ) {
+	case "read":{
 		let x = pin().read().toString();
-		ws.send(x);
-		break;
-	case "readCont":
-            // set a timeout of 5 mins.
-		let thisRead = setInterval(() => {
+		ws.send( x );
+		break;}
+	case "readCont": {
+		let thisRead = setInterval( () => {
 			let x = pin().read().toString();
-			ws.send(x);
-		}, 1000);
-		let thisTimeout = setTimeout(function() {
-			clearInterval(thisRead);
-		}, 300000);
-		ws.on("close", () => {
-			clearInterval(thisRead);
-			clearTimeout(thisTimeout);
-		});
+			ws.send( x );
+		}, 1000 );
+		let thisTimeout = setTimeout( function() {
+			clearInterval( thisRead );
+		}, 30000 );
+		ws.on( "close", () => {
+			clearInterval( thisRead );
+			clearTimeout( thisTimeout );
+		} );
 		break;
+	}
 	default:
 		break;
 
@@ -94,82 +95,93 @@ function virtual(pin, cmd) {
 }
 
 function connect() {
-	w.on("connected", (details) => {});
-	w.on("disconnected", (details) => {
-		w.connect(SSID, {
+	w.on( "connected", ( details ) => {
+		w.save();
+		console.log( details );
+	} );
+	w.on( "disconnected", ( details ) => {
+		console.log( "Wifi disconnected:"+details );
+		w.connect( SSID, {
 			password: ssidPassword
-		}, function(error) {
-			console.log(error);
-		});
-	});
+		}, function( error ) {
+			console.log( error );
+		} );
+	} );
 }
 
-function msgParse(msg) {
-	let m = JSON.parse(msg);
-	let device = (map) => {
-		for (let x = 0; x < map.length; x++) {
-			if (map[x].id === m[1].device) {
+function msgParse( msg ) {
+	let m = JSON.parse( msg );
+	let device = ( map ) => {
+		for ( let x = 0; x < map.length; x++ ) {
+			if ( map[x].id === m[1].device ) {
 				return map[x];
 			}
 		}
 	};
-	switch (m[0]) {
-	case "cmd":
-		let d = device(configMap);
-		switch (d.type) {
-		case "button":
-			button(d.pin, m[1].cmd);
+	switch ( m[0] ) {
+	case "cmd": {
+		let d = device( configMap );
+		switch ( d.type ) {
+		case "button": {
+			button( d.pin, m[1].cmd );
 			break;
-		case "virtual":
-			virtual(d.pin, m[1].cmd);
+		}
+		case "virtual": {
+			virtual( d.pin, m[1].cmd );
 			break;
-		case "dimmer":
-			dimmer(d.pin, m[1].cmd);
+		}
+		case "dimmer": {
+			dimmer( d.pin, m[1].cmd );
 			break;
+		}
 		default:
 			break;
 		}
 		break;
-	case "config":
+	}
+	case "config": {
 		break;
+		// parse config stuff...
+	}
 	default:
 		break;
+
 	}
 }
 
-function wsconnect(state) {
-	console.log("Creating the websocket...");
-	if (state === 1) {
+function wsconnect( state ) {
+	console.log( "Creating the websocket..." );
+	if ( state === 1 ) {
 		ws.removeAllListeners();
 		ws = null;
 	}
-	ws = new WebSocket("10.30.1.224", {
+	ws = new WebSocket( "192.168.0.116", {
 		path: "/ws/josh",
 		port: 1880,
 		origin: "MCU",
 		keepAlive: 60
-	});
-	ws.on("open", () => {
-		ws.send(JSON.stringify(configGen(configMap)));
-	});
-	ws.on("close", () => {
-		wsconnect(1);
-	});
-	ws.on("message", (msg) => {
-		msgParse(msg.toString());
-	});
+	} );
+	ws.on( "open", () => {
+		ws.send( JSON.stringify( [ "config", configGen( configMap )] ) );
+	} );
+	ws.on( "close", () => {
+		wsconnect( 1 );
+	} );
+	ws.on( "message", ( msg ) => {
+		msgParse( msg.toString() );
+	} );
 }
 
-E.on("init", () => {
-	console.log("Started " + VERSION + ": Connecting...");
+E.on( "init", () => {
+	console.log( "Started " + VERSION + ": Connecting..." );
 	connect();
 	w.stopAP();
-	w.connect(SSID, {
+	w.connect( SSID, {
 		password: ssidPassword
-	}, (error) => {
-		if (error) {
-			console.log(error);
+	}, ( error ) => {
+		if ( error ) {
+			console.log( error );
 		}
-		wsconnect(0);
-	});
-});
+		wsconnect( 0 );
+	} );
+} );
