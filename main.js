@@ -60,36 +60,36 @@ function configGen( config ) {
 function button( pin, cmd ) {
 	switch ( cmd ) {
 	case "on":
-		{
-			digitalWrite( pin, 0 );
-			let retMsg = [ "state", {
-				device: pin,
-				state: 0
-			} ];
-			ws.send( JSON.stringify( retMsg ) );
-			console.log( "Write: " + pin + " cmd: 'on'" );
-			break;
-		}
+	{
+		digitalWrite( pin, 0 );
+		let retMsg = [ "state", {
+			device: pin,
+			state: 0
+		} ];
+		ws.send( JSON.stringify( retMsg ) );
+		console.log( "Write: " + pin + " cmd: 'on'" );
+		break;
+	}
 	case "off":
-		{
-			digitalWrite( pin, 1 );
-			let retMsg = [ "state", {
-				device: pin,
-				state: 1
-			} ];
-			ws.send( JSON.stringify( [ "state", retMsg ] ) );
-			console.log( "Write: " + pin + " cmd: 'off'" );
-			break;
-		}
+	{
+		digitalWrite( pin, 1 );
+		let retMsg = [ "state", {
+			device: pin,
+			state: 1
+		} ];
+		ws.send( JSON.stringify( retMsg ) );
+		console.log( "Write: " + pin + " cmd: 'off'" );
+		break;
+	}
 	case "getState":
-		{
-			ws.send( pin.getMode() );
-			break;
-		}
+	{
+		ws.send( pin.getMode() );
+		break;
+	}
 	default:
-		{
-			break;
-		}
+	{
+		break;
+	}
 	}
 }
 
@@ -100,30 +100,30 @@ function dimmer( pin, value ) {
 function virtual( pin, cmd ) {
 	switch ( cmd ) {
 	case "read":
-		{
+	{
+		let x = pin()
+			.read()
+			.toString();
+		ws.send( x );
+		break;
+	}
+	case "readCont":
+	{
+		let thisRead = setInterval( () => {
 			let x = pin()
 				.read()
 				.toString();
 			ws.send( x );
-			break;
-		}
-	case "readCont":
-		{
-			let thisRead = setInterval( () => {
-				let x = pin()
-					.read()
-					.toString();
-				ws.send( x );
-			}, 1000 );
-			let thisTimeout = setTimeout( function () {
-				clearInterval( thisRead );
-			}, 30000 );
-			ws.on( "close", () => {
-				clearInterval( thisRead );
-				clearTimeout( thisTimeout );
-			} );
-			break;
-		}
+		}, 1000 );
+		let thisTimeout = setTimeout( function () {
+			clearInterval( thisRead );
+		}, 30000 );
+		ws.on( "close", () => {
+			clearInterval( thisRead );
+			clearTimeout( thisTimeout );
+		} );
+		break;
+	}
 	default:
 		break;
 
@@ -157,37 +157,37 @@ function msgParse( msg ) {
 	console.log( "msg: " + m );
 	switch ( m[ 0 ] ) {
 	case "cmd":
+	{
+		let d = device( configMap );
+		switch ( d.type ) {
+		case "button":
 		{
-			let d = device( configMap );
-			switch ( d.type ) {
-			case "button":
-				{
-					button( d.pin, m[ 1 ].cmd );
-					console.log( d );
-					break;
-				}
-			case "virtual":
-				{
-					virtual( d.pin, m[ 1 ].cmd );
-					console.log( d );
-					break;
-				}
-			case "dimmer":
-				{
-					dimmer( d.pin, m[ 1 ].cmd );
-					console.log( d );
-					break;
-				}
-			default:
-				break;
-			}
+			button( d.pin, m[ 1 ].cmd );
+			console.log( d );
 			break;
 		}
+		case "virtual":
+		{
+			virtual( d.pin, m[ 1 ].cmd );
+			console.log( d );
+			break;
+		}
+		case "dimmer":
+		{
+			dimmer( d.pin, m[ 1 ].cmd );
+			console.log( d );
+			break;
+		}
+		default:
+			break;
+		}
+		break;
+	}
 	case "config":
-		{
-			break;
-			// parse config stuff...
-		}
+	{
+		break;
+		// parse config stuff...
+	}
 	default:
 		break;
 
