@@ -4,7 +4,7 @@ const VERSION = "1.73",
 	SSID = "X11",
 	ssidPassword = "secret99",
 	wemos = {
-		D0: "",
+		D0: null,
 		D1: D5,
 		D2: D4,
 		D3: D0,
@@ -66,7 +66,7 @@ function button( pin, cmd ) {
 				device: pin,
 				state: 0
 			};
-			ws.send( JSON.stringify([ "state", retMsg ]) );
+			ws.send( JSON.stringify( [ "state", retMsg ] ) );
 			console.log( "Write: " + pin + " cmd: 'on'" );
 			break;
 		}
@@ -77,7 +77,7 @@ function button( pin, cmd ) {
 				device: pin,
 				state: 1
 			};
-			ws.send(  JSON.stringify([ "state", retMsg ]) );
+			ws.send(  JSON.stringify( [ "state", retMsg ] ) );
 			console.log( "Write: " + pin + " cmd: 'off'" );
 			break;
 		}
