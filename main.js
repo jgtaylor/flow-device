@@ -60,18 +60,18 @@ function button( pin, cmd ) {
 	switch (cmd) {
 		case "on": {
 			digitalWrite( pin, 0 );
-			ws.send( pin + ":on");
+			ws.send( JSON.stringify({pin: pin, state: 0 }) );
 			console.log("Write: "+pin+" cmd: 'on'");
 			break;
 		}
 		case "off": {
 			digitalWrite( pin, 1 );
-			ws.send( pin + ":off");
+			ws.send( JSON.stringify( {pin: pin, state: 1 } ) );
 			console.log("Write: "+pin+" cmd: 'off'");
 			break;
 		}
 		case "getState": {
-			ws.send( pin.getMode());
+			ws.send( JSON.stringify(pin.getMode()) );
 			break;
 		}
 		default: {
