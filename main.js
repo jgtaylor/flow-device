@@ -60,13 +60,13 @@ function button( pin, cmd ) {
 	switch (cmd) {
 		case "on": {
 			digitalWrite( pin, 0 );
-			ws.send( pin: pin, state: 0 } );
+			ws.send( { pin: pin, state: 0 } );
 			console.log("Write: "+pin+" cmd: 'on'");
 			break;
 		}
 		case "off": {
 			digitalWrite( pin, 1 );
-			ws.send( {pin: pin, state: 1 } );
+			ws.send( { pin: pin, state: 1 } );
 			console.log("Write: "+pin+" cmd: 'off'");
 			break;
 		}
