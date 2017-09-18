@@ -134,20 +134,24 @@ function msgParse( msg ) {
 			}
 		}
 	};
+	console.log( "msg: " + m );
 	switch ( m[0] ) {
 	case "cmd": {
 		let d = device( configMap );
 		switch ( d.type ) {
 		case "button": {
 			button( d.pin, m[1].cmd );
+			console.log(d);
 			break;
 		}
 		case "virtual": {
 			virtual( d.pin, m[1].cmd );
+			console.log(d);
 			break;
 		}
 		case "dimmer": {
 			dimmer( d.pin, m[1].cmd );
+			console.log(d);
 			break;
 		}
 		default:
