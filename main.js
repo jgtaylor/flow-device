@@ -58,6 +58,9 @@ function configGen( config ) {
 }
 
 function button( d, cmd ) {
+	if ( !d.pin.getMode() ) {
+		d.pin.mode( "output" );
+	}
 	switch ( cmd ) {
 	case "on":
 	{
