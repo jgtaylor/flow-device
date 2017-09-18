@@ -1,0 +1,70 @@
+{
+	"env": {
+		"es6": true,
+		"node": true,
+		"commonjs": true,
+		"browser": true
+	},
+	"extends": "eslint:recommended",
+	"parserOptions": {
+		"sourceType": "module"
+	},
+	"rules": {
+		"indent": [1, "tab"],
+		"linebreak-style": [
+			"error",
+			"unix"
+		],
+		"quotes": [
+			"error",
+			"double"
+		],
+		"semi": [
+			"error",
+			"always"
+		],
+		"space-in-parens": ["error", "always"],
+		"no-console": 0,
+		"no-unused-vars": 1
+	},
+	"globals": {
+		"D0": false,
+		"D1": false,
+		"D2": false,
+		"D3": false,
+		"D4": false,
+		"D5": false,
+		"D6": false,
+		"D7": false,
+		"D8": false,
+		"D9": false,
+		"D10": false,
+		"D11": false,
+		"D12": false,
+		"D13": false,
+		"D14": false,
+		"D15": false,
+		"I2C1": false,
+		"I2C0": false,
+		"SPI1": false,
+		"SPI2": false,
+		"SPI3": false,
+		"analogWrite": false,
+		"analogRead": false,
+		"digitalWrite": false,
+		"digitalWrite": false,
+		"E": false,
+		"getPinMode": false,
+		"getSerial": false,
+		"getTime": false,
+		"pinMode": false,
+		"setTime": false,
+		"poke32": false,
+		"poke16": false,
+		"poke8": false,
+		"peek8": false,
+		"peek16": false,
+		"peek32": false,
+		"digitalPulse": false
+	}
+}
