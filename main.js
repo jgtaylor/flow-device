@@ -62,20 +62,22 @@ function button( pin, cmd ) {
 	case "on":
 		{
 			digitalWrite( pin, 0 );
-			ws.send( {
-				pin: pin,
+			let retMsg = {
+				device: pin,
 				state: 0
-			} );
+			};
+			ws.send( JSON.stringify([ "state", retMsg ]) );
 			console.log( "Write: " + pin + " cmd: 'on'" );
 			break;
 		}
 	case "off":
 		{
 			digitalWrite( pin, 1 );
-			ws.send( {
-				pin: pin,
+			let retMsg = {
+				device: pin,
 				state: 1
-			} );
+			};
+			ws.send(  JSON.stringify([ "state", retMsg ]) );
 			console.log( "Write: " + pin + " cmd: 'off'" );
 			break;
 		}
