@@ -57,10 +57,22 @@ function configGen( config ) {
 }
 
 function button( pin, cmd ) {
-	if ( cmd === "on" ) {
-		digitalWrite( pin, 0 );
-	} else if ( cmd === "off" ) {
-		digitalWrite( pin, 1 );
+	switch (cmd) {
+		case "on": {
+			digitalWrite( pin, 0 );
+			break;
+		}
+		case "off": {
+			digitalWrite( pin, 1 );
+			break;
+		}
+		case "getState": {
+			pin.getMode();
+			break;
+		}
+		default: {
+			break;
+		}
 	}
 }
 
