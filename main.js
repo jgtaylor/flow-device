@@ -83,7 +83,7 @@ function button( d, cmd ) {
 	{
 		ws.send( JSON.stringify( [ "state", {
 			mode: d.pin.getMode(),
-			value: digitalRead( d.pin )
+			value: d.pin.read()
 		} ] ) );
 		break;
 	}
