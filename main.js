@@ -57,13 +57,13 @@ function configGen( config ) {
 	return ret;
 }
 
-function button( pin, cmd ) {
+function button( d, cmd ) {
 	switch ( cmd ) {
 	case "on":
 	{
-		digitalWrite( pin, 0 );
+		digitalWrite( d.pin, 0 );
 		let retMsg = [ "state", {
-			device: pin,
+			device: d.id,
 			state: 0
 		} ];
 		ws.send( JSON.stringify( retMsg ) );
@@ -72,18 +72,18 @@ function button( pin, cmd ) {
 	}
 	case "off":
 	{
-		digitalWrite( pin, 1 );
+		digitalWrite( d.pin, 1 );
 		let retMsg = [ "state", {
-			device: pin,
+			device: d.id,
 			state: 1
 		} ];
 		ws.send( JSON.stringify( retMsg ) );
-		console.log( "Write: " + pin + " cmd: 'off'" );
+		console.log( "Write: " + d.pin + " cmd: 'off'" );
 		break;
 	}
 	case "getState":
 	{
-		ws.send( pin.getMode() );
+		ws.send( d.pin.getMode() );
 		break;
 	}
 	default:
@@ -93,15 +93,15 @@ function button( pin, cmd ) {
 	}
 }
 
-function dimmer( pin, value ) {
-	analogWrite( pin, value );
+function dimmer( d, value ) {
+	analogWrite( d.pin, value );
 }
 
-function virtual( pin, cmd ) {
+function virtual( d, cmd ) {
 	switch ( cmd ) {
 	case "read":
 	{
-		let x = pin()
+		let x = d.pin()
 			.read()
 			.toString();
 		ws.send( x );
@@ -110,7 +110,7 @@ function virtual( pin, cmd ) {
 	case "readCont":
 	{
 		let thisRead = setInterval( () => {
-			let x = pin()
+			let x = d.pin()
 				.read()
 				.toString();
 			ws.send( x );
@@ -162,19 +162,19 @@ function msgParse( msg ) {
 		switch ( d.type ) {
 		case "button":
 		{
-			button( d.pin, m[ 1 ].cmd );
+			button( d, m[ 1 ].cmd );
 			console.log( d );
 			break;
 		}
 		case "virtual":
 		{
-			virtual( d.pin, m[ 1 ].cmd );
+			virtual( d, m[ 1 ].cmd );
 			console.log( d );
 			break;
 		}
 		case "dimmer":
 		{
-			dimmer( d.pin, m[ 1 ].cmd );
+			dimmer( d, m[ 1 ].cmd );
 			console.log( d );
 			break;
 		}
