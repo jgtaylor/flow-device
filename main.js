@@ -136,21 +136,6 @@ function virtual( d, cmd ) {
 	}
 }
 
-function connect() {
-	w.on( "connected", ( details ) => {
-		w.save();
-		console.log( details );
-	} );
-	w.on( "disconnected", ( details ) => {
-		console.log( "Wifi disconnected:" + details );
-		w.connect( SSID, {
-			password: ssidPassword
-		}, function ( error ) {
-			console.log( error );
-		} );
-	} );
-}
-
 function msgParse( msg ) {
 	let m = JSON.parse( msg );
 	let device = ( map ) => {
@@ -223,8 +208,18 @@ function WebSockconnect( state ) {
 
 E.on( "init", () => {
 	console.log( "Started " + VERSION + ": Connecting..." );
-	connect();
-	w.stopAP();
+	w.on( "connected", ( details ) => {
+		//w.save();
+		console.log( details );
+	} );
+	w.on( "disconnected", ( details ) => {
+		console.log( "Wifi disconnected:" + details );
+		w.connect( SSID, {
+			password: ssidPassword
+		}, function ( error ) {
+			console.log( error );
+		} );
+	} );
 	w.connect( SSID, {
 		password: ssidPassword
 	}, ( error ) => {
