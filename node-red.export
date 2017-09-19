@@ -22,7 +22,7 @@
         "y": 680,
         "wires": [
             [
-                "66d44e6e.ecd64"
+                "52c3aa7b.0b7c34"
             ]
         ]
     },
@@ -34,24 +34,8 @@
         "server": "2f1d34e.9d2b8cc",
         "client": "",
         "x": 590,
-        "y": 60,
+        "y": 180,
         "wires": []
-    },
-    {
-        "id": "b07172aa.2cf81",
-        "type": "function",
-        "z": "5522b6d5.99c318",
-        "name": "config-msg",
-        "func": "msg.payload = JSON.stringify(msg.payload);\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 409,
-        "y": 60,
-        "wires": [
-            [
-                "2b449b86.5d7a14"
-            ]
-        ]
     },
     {
         "id": "6f07559b.f5f84c",
@@ -68,23 +52,7 @@
         "y": 40,
         "wires": [
             [
-                "b07172aa.2cf81"
-            ]
-        ]
-    },
-    {
-        "id": "66d44e6e.ecd64",
-        "type": "function",
-        "z": "5522b6d5.99c318",
-        "name": "decode websocket",
-        "func": "msg.payload = JSON.parse(msg.payload.toString());\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 270,
-        "y": 680,
-        "wires": [
-            [
-                "a04b070e.b21d08"
+                "c93fe27.fb4482"
             ]
         ]
     },
@@ -103,7 +71,7 @@
         "y": 80,
         "wires": [
             [
-                "b07172aa.2cf81"
+                "c93fe27.fb4482"
             ]
         ]
     },
@@ -122,7 +90,7 @@
         "y": 140,
         "wires": [
             [
-                "b07172aa.2cf81"
+                "c93fe27.fb4482"
             ]
         ]
     },
@@ -141,7 +109,7 @@
         "y": 220,
         "wires": [
             [
-                "b07172aa.2cf81"
+                "c93fe27.fb4482"
             ]
         ]
     },
@@ -160,7 +128,7 @@
         "y": 180,
         "wires": [
             [
-                "b07172aa.2cf81"
+                "c93fe27.fb4482"
             ]
         ]
     },
@@ -179,7 +147,7 @@
         "y": 260,
         "wires": [
             [
-                "b07172aa.2cf81"
+                "c93fe27.fb4482"
             ]
         ]
     },
@@ -198,7 +166,35 @@
         "y": 320,
         "wires": [
             [
-                "b07172aa.2cf81"
+                "c93fe27.fb4482"
+            ]
+        ]
+    },
+    {
+        "id": "c93fe27.fb4482",
+        "type": "json",
+        "z": "5522b6d5.99c318",
+        "name": "",
+        "pretty": false,
+        "x": 390,
+        "y": 180,
+        "wires": [
+            [
+                "2b449b86.5d7a14"
+            ]
+        ]
+    },
+    {
+        "id": "52c3aa7b.0b7c34",
+        "type": "json",
+        "z": "5522b6d5.99c318",
+        "name": "",
+        "pretty": false,
+        "x": 250,
+        "y": 680,
+        "wires": [
+            [
+                "a04b070e.b21d08"
             ]
         ]
     },
