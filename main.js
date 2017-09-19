@@ -43,7 +43,7 @@ const VERSION = "1.74",
 		pin: () => {
 			var dht = require( "DHT22" )
 				.connect( wemos.D7 );
-			return lux;
+			return dht;
 		},
 		type: "virtual",
 		validCmds: [ "read", "readCont", "readContStop" ],
