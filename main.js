@@ -92,7 +92,7 @@ const VERSION = "1.74",
 			}
 		},
 		type: "virtual",
-		validCmds: [ "read", "readCont", "readContStop" ],
+		validCmds: [ "read" ],
 		meta: {
 			metric: "Temp & Humidity",
 			unit: "celsius & % relative humidity"
