@@ -67,7 +67,8 @@ function button( d, cmd ) {
 		digitalWrite( d.pin, 0 );
 		let retMsg = [ "state", {
 			device: d.id,
-			state: 0
+			mode: d.pin.getMode(),
+			value: d.pin.read()
 		} ];
 		ws.send( JSON.stringify( retMsg ) );
 		break;
@@ -77,7 +78,8 @@ function button( d, cmd ) {
 		digitalWrite( d.pin, 1 );
 		let retMsg = [ "state", {
 			device: d.id,
-			state: 1
+			mode: d.pin.getMode(),
+			value: d.pin.read()
 		} ];
 		ws.send( JSON.stringify( retMsg ) );
 		break;
@@ -85,6 +87,7 @@ function button( d, cmd ) {
 	case "getState":
 	{
 		ws.send( JSON.stringify( [ "state", {
+			device: d.id,
 			mode: d.pin.getMode(),
 			value: d.pin.read()
 		} ] ) );
