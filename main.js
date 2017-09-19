@@ -32,7 +32,7 @@ const VERSION = "1.74",
 		}
 	}, {
 		id: "828fbaa2-4f56-4cc5-99bf-57dcb5bd85f5",
-		pin: wemos.D4,
+		pin: wemos.D5,
 		type: "button",
 		validCmds: [ "on", "off", "getState" ],
 		meta: {
