@@ -63,7 +63,7 @@ function button( d, cmd ) {
 	switch ( cmd ) {
 	case "on":
 	{
-		digitalWrite( d.pin, 0 );
+		digitalWrite( d.pin, 1 );
 		let retMsg = [ "state", {
 			device: d.id,
 			mode: d.pin.getMode(),
@@ -74,7 +74,7 @@ function button( d, cmd ) {
 	}
 	case "off":
 	{
-		digitalWrite( d.pin, 1 );
+		digitalWrite( d.pin, 0 );
 		let retMsg = [ "state", {
 			device: d.id,
 			mode: d.pin.getMode(),
