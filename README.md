@@ -1,12 +1,9 @@
-# flow-gpio
-GPIO R/W for flow.
 
 ## basic rundown
-each peripheral on the WemosD1 should be defined in the `configMap` object, on the device itself.
 
-On `load()`, a configuration JSON is sent to the websocket server. In this case, it's just Node-Red.
+Each peripheral on the WemosD1 should be defined in the `configMap` object, on the device itself. On `load()`, a configuration JSON is sent to the websocket server. In this case, it's just Node-Red.
 
-It should look something like this, on the device:
+It should look something like this, on the device (WemosD1):
 ```javascript
 [ {
 		id: "dccbaa81-b2e4-46e4-a2f4-84d398dd86e3",
