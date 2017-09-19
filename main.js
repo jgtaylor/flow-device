@@ -38,6 +38,19 @@ const VERSION = "1.74",
 		meta: {
 			usage: "Mains Relay"
 		}
+	}, {
+		id: "c6d2a817-0c3a-4b6f-8478-cd81628a63f5",
+		pin: () => {
+			var dht = require( "DHT22" )
+				.connect( wemos.D7 );
+			return lux;
+		},
+		type: "virtual",
+		validCmds: [ "read", "readCont", "readContStop" ],
+		meta: {
+			metric: "light intensity",
+			unit: "lux"
+		}
 	} ],
 	WebSocket = require( "ws" );
 var WebSock = {};
