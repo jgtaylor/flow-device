@@ -41,7 +41,7 @@ const VERSION = "1.74",
 		}
 	} ],
 	WebSocket = require( "ws" );
-var ws = {};
+var WS = {};
 
 function configGen( config ) {
 	let ret = [];
@@ -70,7 +70,7 @@ function button( d, cmd ) {
 			mode: d.pin.getMode(),
 			value: d.pin.read()
 		} ];
-		ws.send( JSON.stringify( retMsg ) );
+		WS.send( JSON.stringify( retMsg ) );
 		break;
 	}
 	case "off":
@@ -81,12 +81,12 @@ function button( d, cmd ) {
 			mode: d.pin.getMode(),
 			value: d.pin.read()
 		} ];
-		ws.send( JSON.stringify( retMsg ) );
+		WS.send( JSON.stringify( retMsg ) );
 		break;
 	}
 	case "getState":
 	{
-		ws.send( JSON.stringify( [ "state", {
+		WS.send( JSON.stringify( [ "state", {
 			device: d.id,
 			mode: d.pin.getMode(),
 			value: d.pin.read()
@@ -111,7 +111,7 @@ function virtual( d, cmd ) {
 		let x = d.pin()
 			.read()
 			.toString();
-		ws.send( x );
+		WS.send( x );
 		break;
 	}
 	case "readCont":
@@ -120,12 +120,12 @@ function virtual( d, cmd ) {
 			let x = d.pin()
 				.read()
 				.toString();
-			ws.send( x );
+			WS.send( x );
 		}, 1000 );
 		let thisTimeout = setTimeout( function () {
 			clearInterval( thisRead );
 		}, 30000 );
-		ws.on( "close", () => {
+		WS.on( "close", () => {
 			clearInterval( thisRead );
 			clearTimeout( thisTimeout );
 		} );
@@ -197,27 +197,27 @@ function msgParse( msg ) {
 	}
 }
 
-function wsconnect( state ) {
+function WSconnect( state ) {
 	console.log( "Creating the websocket..." );
 	if ( state === 1 ) {
-		ws.removeAllListeners();
-		ws = null;
+		WS.removeAllListeners();
+		WS = null;
 	}
-	ws = new WebSocket( "192.168.0.116", {
-		path: "/ws/josh",
+	WS = new WebSocket( "192.168.0.116", {
+		path: "/WS/josh",
 		port: 1880,
 		origin: "MCU",
 		keepAlive: 60
 	} );
-	ws.on( "open", () => {
-		ws.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
+	WS.on( "open", () => {
+		WS.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
 		console.log( "[SUCCESS] WebSocket connected." );
 	} );
-	ws.on( "close", () => {
+	WS.on( "close", () => {
 		console.log( "[ERROR] WebSocket closed - reconnecting..." );
-		wsconnect( 1 );
+		WSconnect( 1 );
 	} );
-	ws.on( "message", ( msg ) => {
+	WS.on( "message", ( msg ) => {
 		msgParse( msg.toString() );
 	} );
 }
@@ -232,6 +232,6 @@ E.on( "init", () => {
 		if ( error ) {
 			console.log( error );
 		}
-		wsconnect( 0 );
+		WSconnect( 0 );
 	} );
 } );
