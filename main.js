@@ -94,8 +94,8 @@ const VERSION = "1.74",
 		type: "virtual",
 		validCmds: [ "read", "readCont", "readContStop" ],
 		meta: {
-			metric: "light intensity",
-			unit: "lux"
+			metric: "Temp & Humidity",
+			unit: "celsius & % relative humidity"
 		}
 	} ],
 	WebSocket = require( "ws" );
