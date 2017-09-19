@@ -1,5 +1,24 @@
 [
     {
+        "id": "8a875f4b.00a65",
+        "type": "template",
+        "z": "5522b6d5.99c318",
+        "name": "gauge page - real time",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<html>\n<body>\n<script>\nvar ws;\nsetTimeout(function(){\n\tws = new WebSocket(\"ws://\" + location.host + \"/ws/josh\");\n\tws.onmessage = function (event) {\n\t\tconsole.log(\"MSG:\"+event.data);\n\t\t};\n\t\tsetTimeout(function() {\n\t\t\tws.send(JSON.stringify( [ \"config\" ]));\n\t\t}, 1000);\n},1000);\n</script>\n<h1> the Gauages </h1>\n<div class = \"container\">\n    <p> the guages go here. also something to work with them... </p>\n</div>\n</body>\n</html>",
+        "output": "str",
+        "x": 280,
+        "y": 760,
+        "wires": [
+            [
+                "c64a5371.89adf"
+            ]
+        ]
+    },
+    {
         "id": "a04b070e.b21d08",
         "type": "debug",
         "z": "5522b6d5.99c318",
@@ -7,8 +26,8 @@
         "active": true,
         "console": "false",
         "complete": "payload",
-        "x": 470,
-        "y": 680,
+        "x": 760,
+        "y": 230,
         "wires": []
     },
     {
@@ -18,11 +37,11 @@
         "name": "",
         "server": "2f1d34e.9d2b8cc",
         "client": "",
-        "x": 89,
-        "y": 680,
+        "x": 449,
+        "y": 230,
         "wires": [
             [
-                "66d44e6e.ecd64"
+                "52c3aa7b.0b7c34"
             ]
         ]
     },
@@ -34,24 +53,8 @@
         "server": "2f1d34e.9d2b8cc",
         "client": "",
         "x": 590,
-        "y": 60,
+        "y": 180,
         "wires": []
-    },
-    {
-        "id": "b07172aa.2cf81",
-        "type": "function",
-        "z": "5522b6d5.99c318",
-        "name": "config-msg",
-        "func": "msg.payload = JSON.stringify(msg.payload);\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 409,
-        "y": 60,
-        "wires": [
-            [
-                "2b449b86.5d7a14"
-            ]
-        ]
     },
     {
         "id": "6f07559b.f5f84c",
@@ -68,23 +71,7 @@
         "y": 40,
         "wires": [
             [
-                "b07172aa.2cf81"
-            ]
-        ]
-    },
-    {
-        "id": "66d44e6e.ecd64",
-        "type": "function",
-        "z": "5522b6d5.99c318",
-        "name": "decode websocket",
-        "func": "msg.payload = JSON.parse(msg.payload.toString());\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 270,
-        "y": 680,
-        "wires": [
-            [
-                "a04b070e.b21d08"
+                "c93fe27.fb4482"
             ]
         ]
     },
@@ -92,37 +79,18 @@
         "id": "f7f9a40a.2ff1e8",
         "type": "inject",
         "z": "5522b6d5.99c318",
-        "name": "light-readCont",
+        "name": "Light Read 30s",
         "topic": "",
         "payload": "[ \"cmd\", { \"device\": \"dccbaa81-b2e4-46e4-a2f4-84d398dd86e3\", \"cmd\": \"readCont\"}]",
         "payloadType": "json",
         "repeat": "",
         "crontab": "",
         "once": false,
-        "x": 130,
+        "x": 140,
         "y": 80,
         "wires": [
             [
-                "b07172aa.2cf81"
-            ]
-        ]
-    },
-    {
-        "id": "7027cf48.e964a",
-        "type": "inject",
-        "z": "5522b6d5.99c318",
-        "name": "readStop",
-        "topic": "",
-        "payload": "[ \"cmd\", { \"device\": \"dccbaa81-b2e4-46e4-a2f4-84d398dd86e3\", \"cmd\": \"readStop\"}]",
-        "payloadType": "str",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 120,
-        "y": 140,
-        "wires": [
-            [
-                "b07172aa.2cf81"
+                "c93fe27.fb4482"
             ]
         ]
     },
@@ -137,11 +105,11 @@
         "repeat": "",
         "crontab": "",
         "once": false,
-        "x": 260,
-        "y": 240,
+        "x": 120,
+        "y": 220,
         "wires": [
             [
-                "b07172aa.2cf81"
+                "c93fe27.fb4482"
             ]
         ]
     },
@@ -156,11 +124,11 @@
         "repeat": "",
         "crontab": "",
         "once": false,
-        "x": 220,
-        "y": 200,
+        "x": 120,
+        "y": 180,
         "wires": [
             [
-                "b07172aa.2cf81"
+                "c93fe27.fb4482"
             ]
         ]
     },
@@ -175,11 +143,105 @@
         "repeat": "",
         "crontab": "",
         "once": false,
-        "x": 310,
-        "y": 280,
+        "x": 130,
+        "y": 260,
         "wires": [
             [
-                "b07172aa.2cf81"
+                "c93fe27.fb4482"
+            ]
+        ]
+    },
+    {
+        "id": "6db8e438.f2fbbc",
+        "type": "inject",
+        "z": "5522b6d5.99c318",
+        "name": "DHT22 - T/RH",
+        "topic": "",
+        "payload": "[ \"cmd\", { \"device\": \"c6d2a817-0c3a-4b6f-8478-cd81628a63f5\", \"cmd\": \"read\"}]",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 130,
+        "y": 320,
+        "wires": [
+            [
+                "c93fe27.fb4482"
+            ]
+        ]
+    },
+    {
+        "id": "c93fe27.fb4482",
+        "type": "json",
+        "z": "5522b6d5.99c318",
+        "name": "",
+        "pretty": false,
+        "x": 390,
+        "y": 180,
+        "wires": [
+            [
+                "2b449b86.5d7a14"
+            ]
+        ]
+    },
+    {
+        "id": "52c3aa7b.0b7c34",
+        "type": "json",
+        "z": "5522b6d5.99c318",
+        "name": "",
+        "pretty": false,
+        "x": 610,
+        "y": 230,
+        "wires": [
+            [
+                "a04b070e.b21d08"
+            ]
+        ]
+    },
+    {
+        "id": "63fe374.3da45c8",
+        "type": "http in",
+        "z": "5522b6d5.99c318",
+        "name": "Guage",
+        "url": "/guage",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 70,
+        "y": 760,
+        "wires": [
+            [
+                "8a875f4b.00a65"
+            ]
+        ]
+    },
+    {
+        "id": "c64a5371.89adf",
+        "type": "http response",
+        "z": "5522b6d5.99c318",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 600,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "c2e7631a.60545",
+        "type": "inject",
+        "z": "5522b6d5.99c318",
+        "name": "Config Req",
+        "topic": "",
+        "payload": "[  \"config\" ]",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 110,
+        "y": 390,
+        "wires": [
+            [
+                "c93fe27.fb4482"
             ]
         ]
     },

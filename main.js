@@ -14,7 +14,7 @@ const VERSION = "1.74",
 	},
 	configMap = [ {
 		id: "dccbaa81-b2e4-46e4-a2f4-84d398dd86e3",
-		pin: () => {
+		pin: function ( cmd ) {
 			I2C1.setup( {
 				scl: D5,
 				sda: D4
@@ -22,10 +22,43 @@ const VERSION = "1.74",
 			var lux = require( "BH1750" )
 				.connect( I2C1 );
 			lux.start( 1 );
-			return lux;
+			switch ( cmd ) {
+			case "read":
+			{
+				let x = lux.read()
+					.toString();
+				WebSock.send( JSON.stringify( [ "reading", {
+					device: this.id,
+					value: x
+				} ] ) );
+				break;
+			}
+			case "readCont":
+			{
+				let thisRead = setInterval( () => {
+					let x = lux.read()
+						.toString();
+					WebSock.send( JSON.stringify( [ "reading", {
+						device: this.id,
+						value: x
+					} ] ) );
+				}, 1000 );
+				let thisTimeout = setTimeout( function () {
+					clearInterval( thisRead );
+				}, 30000 );
+				WebSock.on( "close", () => {
+					clearInterval( thisRead );
+					clearTimeout( thisTimeout );
+				} );
+				break;
+			}
+			default:
+				break;
+
+			}
 		},
 		type: "virtual",
-		validCmds: [ "read", "readCont", "readContStop" ],
+		validCmds: [ "read", "readCont" ],
 		meta: {
 			metric: "light intensity",
 			unit: "lux"
@@ -37,6 +70,32 @@ const VERSION = "1.74",
 		validCmds: [ "on", "off", "getState" ],
 		meta: {
 			usage: "Mains Relay"
+		}
+	}, {
+		id: "c6d2a817-0c3a-4b6f-8478-cd81628a63f5",
+		pin: function ( cmd ) {
+			var dht = require( "DHT22" )
+				.connect( wemos.D7 );
+			switch ( cmd ) {
+			case "read":
+			{
+				dht.read( ( data ) => {
+					WebSock.send( JSON.stringify( [ "reading", {
+						device: this.id,
+						value: data
+					} ] ) );
+				} );
+				break;
+			}
+			default:
+				break;
+			}
+		},
+		type: "virtual",
+		validCmds: [ "read" ],
+		meta: {
+			metric: "Temp & Humidity",
+			unit: "celsius & % relative humidity"
 		}
 	} ],
 	WebSocket = require( "ws" );
@@ -104,42 +163,7 @@ function dimmer( d, value ) {
 }
 
 function virtual( d, cmd ) {
-	switch ( cmd ) {
-	case "read":
-	{
-		let x = d.pin()
-			.read()
-			.toString();
-		WebSock.send( JSON.stringify( [ "reading", {
-			device: d.id,
-			value: x
-		} ] ) );
-		break;
-	}
-	case "readCont":
-	{
-		let thisRead = setInterval( () => {
-			let x = d.pin()
-				.read()
-				.toString();
-			WebSock.send( JSON.stringify( [ "reading", {
-				device: d.id,
-				value: x
-			} ] ) );
-		}, 1000 );
-		let thisTimeout = setTimeout( function () {
-			clearInterval( thisRead );
-		}, 30000 );
-		WebSock.on( "close", () => {
-			clearInterval( thisRead );
-			clearTimeout( thisTimeout );
-		} );
-		break;
-	}
-	default:
-		break;
-
-	}
+	d.pin( cmd );
 }
 
 function msgParse( msg ) {
@@ -178,6 +202,7 @@ function msgParse( msg ) {
 	}
 	case "config":
 	{
+		WebSock.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
 		break;
 		// parse config stuff...
 	}
