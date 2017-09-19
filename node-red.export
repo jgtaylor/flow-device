@@ -137,8 +137,8 @@
         "repeat": "",
         "crontab": "",
         "once": false,
-        "x": 260,
-        "y": 240,
+        "x": 120,
+        "y": 220,
         "wires": [
             [
                 "b07172aa.2cf81"
@@ -156,8 +156,8 @@
         "repeat": "",
         "crontab": "",
         "once": false,
-        "x": 220,
-        "y": 200,
+        "x": 120,
+        "y": 180,
         "wires": [
             [
                 "b07172aa.2cf81"
@@ -175,8 +175,27 @@
         "repeat": "",
         "crontab": "",
         "once": false,
-        "x": 310,
-        "y": 280,
+        "x": 130,
+        "y": 260,
+        "wires": [
+            [
+                "b07172aa.2cf81"
+            ]
+        ]
+    },
+    {
+        "id": "6db8e438.f2fbbc",
+        "type": "inject",
+        "z": "5522b6d5.99c318",
+        "name": "DHT22 - T/RH",
+        "topic": "",
+        "payload": "[ \"cmd\", { \"device\": \"c6d2a817-0c3a-4b6f-8478-cd81628a63f5\", \"cmd\": \"read\"}]",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 130,
+        "y": 320,
         "wires": [
             [
                 "b07172aa.2cf81"
