@@ -1,5 +1,4 @@
 const VERSION = "1.74",
-	ESP = require( "ESP8266" ),
 	w = require( "Wifi" ),
 	SSID = "X11",
 	ssidPassword = "secret99",
