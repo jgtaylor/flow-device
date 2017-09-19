@@ -204,7 +204,7 @@ function WSconnect( state ) {
 		WS = null;
 	}
 	WS = new WebSocket( "192.168.0.116", {
-		path: "/WS/josh",
+		path: "/ws/josh",
 		port: 1880,
 		origin: "MCU",
 		keepAlive: 60
