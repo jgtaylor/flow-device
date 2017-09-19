@@ -52,7 +52,7 @@
 		"analogWrite": false,
 		"analogRead": false,
 		"digitalWrite": false,
-		"digitalWrite": false,
+		"digitalRead": false,
 		"E": false,
 		"getPinMode": false,
 		"getSerial": false,
