@@ -58,7 +58,7 @@ const VERSION = "1.74",
 			}
 		},
 		type: "virtual",
-		validCmds: [ "read", "readCont", "readContStop" ],
+		validCmds: [ "read", "readCont" ],
 		meta: {
 			metric: "light intensity",
 			unit: "lux"
@@ -202,6 +202,7 @@ function msgParse( msg ) {
 	}
 	case "config":
 	{
+		WebSock.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
 		break;
 		// parse config stuff...
 	}
