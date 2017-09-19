@@ -110,7 +110,10 @@ function virtual( d, cmd ) {
 		let x = d.pin()
 			.read()
 			.toString();
-		WebSock.send( x );
+		WebSock.send( JSON.stringify( [ "reading", {
+			device: d.id,
+			value: x
+		} ] ) );
 		break;
 	}
 	case "readCont":
@@ -119,7 +122,10 @@ function virtual( d, cmd ) {
 			let x = d.pin()
 				.read()
 				.toString();
-			WebSock.send( x );
+			WebSock.send( JSON.stringify( [ "reading", {
+				device: d.id,
+				value: x
+			} ] ) );
 		}, 1000 );
 		let thisTimeout = setTimeout( function () {
 			clearInterval( thisRead );
