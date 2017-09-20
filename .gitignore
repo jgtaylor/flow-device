@@ -29,6 +29,7 @@ build/*
 
 # Dependency directories
 node_modules
+modules
 jspm_packages
 
 # Optional npm cache directory
