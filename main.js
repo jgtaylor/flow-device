@@ -10,7 +10,8 @@ const VERSION = "1.74",
 		D4: D2,
 		D5: D14,
 		D6: D12,
-		D7: D13
+		D7: D13,
+		D8: D15
 	},
 	configMap = [ {
 		id: "dccbaa81-b2e4-46e4-a2f4-84d398dd86e3",
@@ -24,34 +25,34 @@ const VERSION = "1.74",
 			lux.start( 1 );
 			switch ( cmd ) {
 			case "read":
-			{
-				let x = lux.read()
-					.toString();
-				WebSock.send( JSON.stringify( [ "reading", {
-					device: this.id,
-					value: x
-				} ] ) );
-				break;
-			}
-			case "readCont":
-			{
-				let thisRead = setInterval( () => {
+				{
 					let x = lux.read()
 						.toString();
 					WebSock.send( JSON.stringify( [ "reading", {
 						device: this.id,
 						value: x
 					} ] ) );
-				}, 1000 );
-				let thisTimeout = setTimeout( function () {
-					clearInterval( thisRead );
-				}, 30000 );
-				WebSock.on( "close", () => {
-					clearInterval( thisRead );
-					clearTimeout( thisTimeout );
-				} );
-				break;
-			}
+					break;
+				}
+			case "readCont":
+				{
+					let thisRead = setInterval( () => {
+						let x = lux.read()
+							.toString();
+						WebSock.send( JSON.stringify( [ "reading", {
+							device: this.id,
+							value: x
+						} ] ) );
+					}, 1000 );
+					let thisTimeout = setTimeout( function () {
+						clearInterval( thisRead );
+					}, 30000 );
+					WebSock.on( "close", () => {
+						clearInterval( thisRead );
+						clearTimeout( thisTimeout );
+					} );
+					break;
+				}
 			default:
 				break;
 
@@ -78,15 +79,15 @@ const VERSION = "1.74",
 				.connect( wemos.D7 );
 			switch ( cmd ) {
 			case "read":
-			{
-				dht.read( ( data ) => {
-					WebSock.send( JSON.stringify( [ "reading", {
-						device: this.id,
-						value: data
-					} ] ) );
-				} );
-				break;
-			}
+				{
+					dht.read( ( data ) => {
+						WebSock.send( JSON.stringify( [ "reading", {
+							device: this.id,
+							value: data
+						} ] ) );
+					} );
+					break;
+				}
 			default:
 				break;
 			}
@@ -121,40 +122,40 @@ function button( d, cmd ) {
 	}
 	switch ( cmd ) {
 	case "on":
-	{
-		digitalWrite( d.pin, 1 );
-		let retMsg = [ "state", {
-			device: d.id,
-			mode: d.pin.getMode(),
-			value: d.pin.read()
-		} ];
-		WebSock.send( JSON.stringify( retMsg ) );
-		break;
-	}
+		{
+			digitalWrite( d.pin, 1 );
+			let retMsg = [ "state", {
+				device: d.id,
+				mode: d.pin.getMode(),
+				value: d.pin.read()
+			} ];
+			WebSock.send( JSON.stringify( retMsg ) );
+			break;
+		}
 	case "off":
-	{
-		digitalWrite( d.pin, 0 );
-		let retMsg = [ "state", {
-			device: d.id,
-			mode: d.pin.getMode(),
-			value: d.pin.read()
-		} ];
-		WebSock.send( JSON.stringify( retMsg ) );
-		break;
-	}
+		{
+			digitalWrite( d.pin, 0 );
+			let retMsg = [ "state", {
+				device: d.id,
+				mode: d.pin.getMode(),
+				value: d.pin.read()
+			} ];
+			WebSock.send( JSON.stringify( retMsg ) );
+			break;
+		}
 	case "getState":
-	{
-		WebSock.send( JSON.stringify( [ "state", {
-			device: d.id,
-			mode: d.pin.getMode(),
-			value: d.pin.read()
-		} ] ) );
-		break;
-	}
+		{
+			WebSock.send( JSON.stringify( [ "state", {
+				device: d.id,
+				mode: d.pin.getMode(),
+				value: d.pin.read()
+			} ] ) );
+			break;
+		}
 	default:
-	{
-		break;
-	}
+		{
+			break;
+		}
 	}
 }
 
@@ -177,35 +178,35 @@ function msgParse( msg ) {
 	};
 	switch ( m[ 0 ] ) {
 	case "cmd":
-	{
-		let d = device( configMap );
-		switch ( d.type ) {
-		case "button":
 		{
-			button( d, m[ 1 ].cmd );
+			let d = device( configMap );
+			switch ( d.type ) {
+			case "button":
+				{
+					button( d, m[ 1 ].cmd );
+					break;
+				}
+			case "virtual":
+				{
+					virtual( d, m[ 1 ].cmd );
+					break;
+				}
+			case "dimmer":
+				{
+					dimmer( d, m[ 1 ].cmd );
+					break;
+				}
+			default:
+				break;
+			}
 			break;
 		}
-		case "virtual":
-		{
-			virtual( d, m[ 1 ].cmd );
-			break;
-		}
-		case "dimmer":
-		{
-			dimmer( d, m[ 1 ].cmd );
-			break;
-		}
-		default:
-			break;
-		}
-		break;
-	}
 	case "config":
-	{
-		WebSock.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
-		break;
-		// parse config stuff...
-	}
+		{
+			WebSock.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
+			break;
+			// parse config stuff...
+		}
 	default:
 		break;
 
