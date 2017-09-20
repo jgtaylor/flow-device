@@ -87,3 +87,11 @@ On the server side, in my case, Node-Red, setup a websocket and `websocket.on('m
 ### importing the Node-Red flow
 
 You can import the flow by opening `node-red.export`, copying the contents, then, in Node-Red, "import->clipboard", paste the JSON, & Deploy.
+
+## Wiring Stuff
+
+![bread board diagram](docs/bread_board.png)
+
+![schematic](/docs/schema.png)
+
+![pcb](/docs/pcb.png)
