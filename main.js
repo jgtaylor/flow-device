@@ -61,7 +61,7 @@ const VERSION = "1.74",
 		type: "virtual",
 		validCmds: [ "read", "readCont" ],
 		meta: {
-			name: "light"
+			name: "light",
 			metric: "light",
 			unit: "lux"
 		}
