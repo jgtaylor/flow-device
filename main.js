@@ -61,7 +61,8 @@ const VERSION = "1.74",
 		type: "virtual",
 		validCmds: [ "read", "readCont" ],
 		meta: {
-			metric: "light intensity",
+			name: "light"
+			metric: "light",
 			unit: "lux"
 		}
 	}, {
@@ -106,9 +107,7 @@ const VERSION = "1.74",
 				validMax: 85,
 				validMin: -20
 			} ],
-			deviceName: "DHT22",
-			metric: "Temp & Humidity",
-			unit: "celsius & % relative humidity"
+			deviceName: "DHT22"
 		}
 	} ],
 	WebSocket = require( "ws" );
