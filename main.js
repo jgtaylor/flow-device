@@ -171,8 +171,26 @@ function button( d, cmd ) {
 	}
 }
 
-function dimmer( d, value ) {
-	analogWrite( d.pin, value );
+function dimmer( d, cmd ) {
+	switch ( cmd ) {
+	case "read":
+		{
+			WebSock.send( JSON.stringify( [ "reading", {
+				device: d.device,
+				value: analogRead()
+			} ] ) );
+		}
+		break;
+	case "expression":
+
+		break;
+	default:
+
+	}
+	analogRead();
+	// on ESP8266, only one pin is analog, so it's not named.
+	// TODO: implement this in the configMap device, so it can have a read
+	// or write. Note that write is only simulated via toggeling a gpio.
 }
 
 function virtual( d, cmd ) {
