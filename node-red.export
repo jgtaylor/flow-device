@@ -1,255 +1,392 @@
-[
-    {
-        "id": "8a875f4b.00a65",
-        "type": "template",
-        "z": "5522b6d5.99c318",
-        "name": "gauge page - real time",
-        "field": "payload",
-        "fieldType": "msg",
-        "format": "handlebars",
-        "syntax": "mustache",
-        "template": "<html>\n<body>\n<script>\nvar ws;\nsetTimeout(function(){\n\tws = new WebSocket(\"ws://\" + location.host + \"/ws/josh\");\n\tws.onmessage = function (event) {\n\t\tconsole.log(\"MSG:\"+event.data);\n\t\t};\n\t\tsetTimeout(function() {\n\t\t\tws.send(JSON.stringify( [ \"config\" ]));\n\t\t}, 1000);\n},1000);\n</script>\n<h1> the Gauages </h1>\n<div class = \"container\">\n    <p> the guages go here. also something to work with them... </p>\n</div>\n</body>\n</html>",
-        "output": "str",
-        "x": 280,
-        "y": 760,
-        "wires": [
-            [
-                "c64a5371.89adf"
-            ]
-        ]
-    },
-    {
-        "id": "a04b070e.b21d08",
-        "type": "debug",
-        "z": "5522b6d5.99c318",
-        "name": "",
-        "active": true,
-        "console": "false",
-        "complete": "payload",
-        "x": 760,
-        "y": 230,
-        "wires": []
-    },
-    {
-        "id": "84e3acaa.31182",
-        "type": "websocket in",
-        "z": "5522b6d5.99c318",
-        "name": "",
-        "server": "2f1d34e.9d2b8cc",
-        "client": "",
-        "x": 449,
-        "y": 230,
-        "wires": [
-            [
-                "52c3aa7b.0b7c34"
-            ]
-        ]
-    },
-    {
-        "id": "2b449b86.5d7a14",
-        "type": "websocket out",
-        "z": "5522b6d5.99c318",
-        "name": "",
-        "server": "2f1d34e.9d2b8cc",
-        "client": "",
-        "x": 590,
-        "y": 180,
-        "wires": []
-    },
-    {
-        "id": "6f07559b.f5f84c",
-        "type": "inject",
-        "z": "5522b6d5.99c318",
-        "name": "light-read-once",
-        "topic": "",
-        "payload": "[ \"cmd\", { \"device\": \"dccbaa81-b2e4-46e4-a2f4-84d398dd86e3\", \"cmd\": \"read\"}]",
-        "payloadType": "json",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 140,
-        "y": 40,
-        "wires": [
-            [
-                "c93fe27.fb4482"
-            ]
-        ]
-    },
-    {
-        "id": "f7f9a40a.2ff1e8",
-        "type": "inject",
-        "z": "5522b6d5.99c318",
-        "name": "Light Read 30s",
-        "topic": "",
-        "payload": "[ \"cmd\", { \"device\": \"dccbaa81-b2e4-46e4-a2f4-84d398dd86e3\", \"cmd\": \"readCont\"}]",
-        "payloadType": "json",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 140,
-        "y": 80,
-        "wires": [
-            [
-                "c93fe27.fb4482"
-            ]
-        ]
-    },
-    {
-        "id": "15df76b3.bef289",
-        "type": "inject",
-        "z": "5522b6d5.99c318",
-        "name": "LED ON",
-        "topic": "",
-        "payload": "[\"cmd\",{\"device\":\"828fbaa2-4f56-4cc5-99bf-57dcb5bd85f5\",\"cmd\":\"on\"}]",
-        "payloadType": "json",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 120,
-        "y": 220,
-        "wires": [
-            [
-                "c93fe27.fb4482"
-            ]
-        ]
-    },
-    {
-        "id": "7ed5cb41.2e3494",
-        "type": "inject",
-        "z": "5522b6d5.99c318",
-        "name": "LED OFF",
-        "topic": "",
-        "payload": "[\"cmd\",{\"device\":\"828fbaa2-4f56-4cc5-99bf-57dcb5bd85f5\",\"cmd\":\"off\"}]",
-        "payloadType": "json",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 120,
-        "y": 180,
-        "wires": [
-            [
-                "c93fe27.fb4482"
-            ]
-        ]
-    },
-    {
-        "id": "de0139b1.3d89c8",
-        "type": "inject",
-        "z": "5522b6d5.99c318",
-        "name": "Get LED State",
-        "topic": "",
-        "payload": "[\"cmd\",{\"device\":\"828fbaa2-4f56-4cc5-99bf-57dcb5bd85f5\",\"cmd\":\"getState\"}]",
-        "payloadType": "json",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 130,
-        "y": 260,
-        "wires": [
-            [
-                "c93fe27.fb4482"
-            ]
-        ]
-    },
-    {
-        "id": "6db8e438.f2fbbc",
-        "type": "inject",
-        "z": "5522b6d5.99c318",
-        "name": "DHT22 - T/RH",
-        "topic": "",
-        "payload": "[ \"cmd\", { \"device\": \"c6d2a817-0c3a-4b6f-8478-cd81628a63f5\", \"cmd\": \"read\"}]",
-        "payloadType": "json",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 130,
-        "y": 320,
-        "wires": [
-            [
-                "c93fe27.fb4482"
-            ]
-        ]
-    },
-    {
-        "id": "c93fe27.fb4482",
-        "type": "json",
-        "z": "5522b6d5.99c318",
-        "name": "",
-        "pretty": false,
-        "x": 390,
-        "y": 180,
-        "wires": [
-            [
-                "2b449b86.5d7a14"
-            ]
-        ]
-    },
-    {
-        "id": "52c3aa7b.0b7c34",
-        "type": "json",
-        "z": "5522b6d5.99c318",
-        "name": "",
-        "pretty": false,
-        "x": 610,
-        "y": 230,
-        "wires": [
-            [
-                "a04b070e.b21d08"
-            ]
-        ]
-    },
-    {
-        "id": "63fe374.3da45c8",
-        "type": "http in",
-        "z": "5522b6d5.99c318",
-        "name": "Guage",
-        "url": "/guage",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 70,
-        "y": 760,
-        "wires": [
-            [
-                "8a875f4b.00a65"
-            ]
-        ]
-    },
-    {
-        "id": "c64a5371.89adf",
-        "type": "http response",
-        "z": "5522b6d5.99c318",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 600,
-        "y": 760,
-        "wires": []
-    },
-    {
-        "id": "c2e7631a.60545",
-        "type": "inject",
-        "z": "5522b6d5.99c318",
-        "name": "Config Req",
-        "topic": "",
-        "payload": "[  \"config\" ]",
-        "payloadType": "json",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 110,
-        "y": 390,
-        "wires": [
-            [
-                "c93fe27.fb4482"
-            ]
-        ]
-    },
-    {
-        "id": "2f1d34e.9d2b8cc",
-        "type": "websocket-listener",
-        "z": "",
-        "path": "/ws/josh",
-        "wholemsg": "false"
-    }
+[{
+		"id": "928d674b.a4fbf8",
+		"type": "websocket in",
+		"z": "ff28ec38.b628",
+		"name": "",
+		"server": "e6ea009.86761",
+		"client": "",
+		"x": 99,
+		"y": 420,
+		"wires": [
+			[
+				"97b71de9.292ac"
+			]
+		]
+	},
+	{
+		"id": "5fb55c6b.9cc344",
+		"type": "websocket out",
+		"z": "ff28ec38.b628",
+		"name": "",
+		"server": "e6ea009.86761",
+		"client": "",
+		"x": 610,
+		"y": 160,
+		"wires": []
+	},
+	{
+		"id": "39c567b5.b23a98",
+		"type": "inject",
+		"z": "ff28ec38.b628",
+		"name": "light-read-once",
+		"topic": "",
+		"payload": "[ \"cmd\", { \"device\": \"dccbaa81-b2e4-46e4-a2f4-84d398dd86e3\", \"cmd\": \"read\"}]",
+		"payloadType": "json",
+		"repeat": "2",
+		"crontab": "",
+		"once": true,
+		"x": 120,
+		"y": 30,
+		"wires": [
+			[
+				"d1632736.9257b8"
+			]
+		]
+	},
+	{
+		"id": "aa5b4db.cb4aab",
+		"type": "inject",
+		"z": "ff28ec38.b628",
+		"name": "Light Read 30s",
+		"topic": "",
+		"payload": "[ \"cmd\", { \"device\": \"dccbaa81-b2e4-46e4-a2f4-84d398dd86e3\", \"cmd\": \"readCont\"}]",
+		"payloadType": "json",
+		"repeat": "",
+		"crontab": "",
+		"once": false,
+		"x": 130,
+		"y": 70,
+		"wires": [
+			[
+				"d1632736.9257b8"
+			]
+		]
+	},
+	{
+		"id": "741c00b5.dee57",
+		"type": "inject",
+		"z": "ff28ec38.b628",
+		"name": "LED ON",
+		"topic": "",
+		"payload": "[\"cmd\",{\"device\":\"828fbaa2-4f56-4cc5-99bf-57dcb5bd85f5\",\"cmd\":\"on\"}]",
+		"payloadType": "json",
+		"repeat": "",
+		"crontab": "",
+		"once": false,
+		"x": 150,
+		"y": 160,
+		"wires": [
+			[
+				"d1632736.9257b8"
+			]
+		]
+	},
+	{
+		"id": "27b00e7a.edf932",
+		"type": "inject",
+		"z": "ff28ec38.b628",
+		"name": "LED OFF",
+		"topic": "",
+		"payload": "[\"cmd\",{\"device\":\"828fbaa2-4f56-4cc5-99bf-57dcb5bd85f5\",\"cmd\":\"off\"}]",
+		"payloadType": "json",
+		"repeat": "",
+		"crontab": "",
+		"once": false,
+		"x": 150,
+		"y": 120,
+		"wires": [
+			[
+				"d1632736.9257b8"
+			]
+		]
+	},
+	{
+		"id": "eae5fa6d.98b158",
+		"type": "inject",
+		"z": "ff28ec38.b628",
+		"name": "Get LED State",
+		"topic": "",
+		"payload": "[\"cmd\",{\"device\":\"828fbaa2-4f56-4cc5-99bf-57dcb5bd85f5\",\"cmd\":\"getState\"}]",
+		"payloadType": "json",
+		"repeat": "",
+		"crontab": "",
+		"once": false,
+		"x": 140,
+		"y": 200,
+		"wires": [
+			[
+				"d1632736.9257b8"
+			]
+		]
+	},
+	{
+		"id": "25adeec5.be75e2",
+		"type": "inject",
+		"z": "ff28ec38.b628",
+		"name": "DHT22 - T/RH",
+		"topic": "",
+		"payload": "[ \"cmd\", { \"device\": \"c6d2a817-0c3a-4b6f-8478-cd81628a63f5\", \"cmd\": \"read\"}]",
+		"payloadType": "json",
+		"repeat": "10",
+		"crontab": "",
+		"once": true,
+		"x": 130,
+		"y": 250,
+		"wires": [
+			[
+				"d1632736.9257b8"
+			]
+		]
+	},
+	{
+		"id": "d1632736.9257b8",
+		"type": "json",
+		"z": "ff28ec38.b628",
+		"name": "",
+		"pretty": false,
+		"x": 400,
+		"y": 160,
+		"wires": [
+			[
+				"5fb55c6b.9cc344"
+			]
+		]
+	},
+	{
+		"id": "97b71de9.292ac",
+		"type": "json",
+		"z": "ff28ec38.b628",
+		"name": "",
+		"pretty": false,
+		"x": 250,
+		"y": 420,
+		"wires": [
+			[
+				"dce0c0a4.a48c5"
+			]
+		]
+	},
+	{
+		"id": "2162b2f5.6c9c9e",
+		"type": "http in",
+		"z": "ff28ec38.b628",
+		"name": "Guage",
+		"url": "/guage",
+		"method": "get",
+		"upload": false,
+		"swaggerDoc": "",
+		"x": 70,
+		"y": 590,
+		"wires": [
+			[
+				"c964467e.487ec8"
+			]
+		]
+	},
+	{
+		"id": "a9cd623b.14a7",
+		"type": "http response",
+		"z": "ff28ec38.b628",
+		"name": "",
+		"statusCode": "",
+		"headers": {},
+		"x": 600,
+		"y": 590,
+		"wires": []
+	},
+	{
+		"id": "c964467e.487ec8",
+		"type": "template",
+		"z": "ff28ec38.b628",
+		"name": "gauge page - real time",
+		"field": "payload",
+		"fieldType": "msg",
+		"format": "handlebars",
+		"syntax": "mustache",
+		"template": "<html>\n<body>\n<script>\nvar ws;\nsetTimeout(function(){\n\tws = new WebSocket(\"ws://\" + location.host + \"/ws/josh\");\n\tws.onmessage = function (event) {\n\t\tconsole.log(\"MSG:\"+event.data);\n\t\t};\n\t\tsetTimeout(function() {\n\t\t\tws.send(JSON.stringify( [ \"config\" ]));\n\t\t}, 1000);\n},1000);\n</script>\n<h1> the Gauages </h1>\n<div class = \"container\">\n    <p> the guages go here. also something to work with them... </p>\n</div>\n</body>\n</html>",
+		"output": "str",
+		"x": 280,
+		"y": 590,
+		"wires": [
+			[
+				"a9cd623b.14a7"
+			]
+		]
+	},
+	{
+		"id": "7b863b.4d48c9c4",
+		"type": "inject",
+		"z": "ff28ec38.b628",
+		"name": "Config Req",
+		"topic": "",
+		"payload": "[  \"config\" ]",
+		"payloadType": "json",
+		"repeat": "",
+		"crontab": "",
+		"once": false,
+		"x": 140,
+		"y": 300,
+		"wires": [
+			[
+				"d1632736.9257b8"
+			]
+		]
+	},
+	{
+		"id": "dce0c0a4.a48c5",
+		"type": "switch",
+		"z": "ff28ec38.b628",
+		"name": "incoming router",
+		"property": "payload",
+		"propertyType": "msg",
+		"rules": [{
+				"t": "cont",
+				"v": "reading",
+				"vt": "str"
+			},
+			{
+				"t": "cont",
+				"v": "config",
+				"vt": "str"
+			}
+		],
+		"checkall": "true",
+		"outputs": 2,
+		"x": 418,
+		"y": 445,
+		"wires": [
+			[
+				"a042ff33.82755"
+			],
+			[
+				"445ce0d7.c960e"
+			]
+		]
+	},
+	{
+		"id": "7a40b8cd.d1d008",
+		"type": "debug",
+		"z": "ff28ec38.b628",
+		"name": "CONFIGS",
+		"active": true,
+		"console": "false",
+		"complete": "payload",
+		"x": 870,
+		"y": 490,
+		"wires": []
+	},
+	{
+		"id": "445ce0d7.c960e",
+		"type": "function",
+		"z": "ff28ec38.b628",
+		"name": "CREATE flow.devicesConfig",
+		"func": "if ( ! flow.get(\"devicesConfig\") ) {\n    flow.set(\"devicesConfig\", []);\n}\n\nvar dc = flow.get(\"devicesConfig\");\nvar add = (config) => {\n        console.log(\"Adding: \"+ config.device);\n        dc.push(config);\n        flow.set(\"devicesConfig\", dc);\n        return true;\n};\nlet L = msg.payload[1];\nmsg.payload.length = 0;\nL.forEach(function(target) {\n    let exists = dc.find(function(sEl) {\n        return target.device === sEl.device;\n    });\n\n    if ( (!exists) || target.device !== exists.device ) {\n        if ( add(target) ) {\n            msg.payload.push({ action: \"add\", result: true, id: target.device});\n        }\n    } else {\n        msg.payload.push({ action: \"add\", result: false, id: target.device});\n    }\n    \n});\n\nreturn msg;",
+		"outputs": 1,
+		"noerr": 0,
+		"x": 672,
+		"y": 490,
+		"wires": [
+			[
+				"7a40b8cd.d1d008"
+			]
+		]
+	},
+	{
+		"id": "47def4fe.4d50ac",
+		"type": "inject",
+		"z": "ff28ec38.b628",
+		"name": "",
+		"topic": "",
+		"payload": "[\"config\",[{\"device\":\"dcc42a81-b2e4-46e4-a2f4-84d398dd86e3\",\"type\":\"virtual\",\"validCmds\":[\"read\",\"readCont\"],\"meta\":{\"metric\":\"light intensity\",\"unit\":\"lux\"}},{\"device\":\"828fbaa2-4f56-4cc5-99bf-57dcb5bd85f5\",\"type\":\"button\",\"validCmds\":[\"on\",\"off\",\"getState\"],\"meta\":{\"usage\":\"Mains Relay\"}},{\"device\":\"c6d2a817-0c3a-4b6f-8478-cd81628a63f5\",\"type\":\"virtual\",\"validCmds\":[\"read\"],\"meta\":{\"metric\":\"Temp & Humidity\",\"unit\":\"celsius & % relative humidity\"}}]]",
+		"payloadType": "json",
+		"repeat": "",
+		"crontab": "",
+		"once": false,
+		"x": 96,
+		"y": 473,
+		"wires": [
+			[
+				"dce0c0a4.a48c5"
+			]
+		]
+	},
+	{
+		"id": "39da7454.d5098c",
+		"type": "inject",
+		"z": "ff28ec38.b628",
+		"name": "",
+		"topic": "",
+		"payload": "[\"config\",[{\"device\":\"garbage-b2e4-46e4-a2f4-84d398dd86e3\",\"type\":\"virtual\",\"validCmds\":[\"read\",\"readCont\"],\"meta\":{\"metric\":\"light intensity\",\"unit\":\"lux\"}},{\"device\":\"828fbaa2-fuck-4cc5-99bf-57dcb5bd85f5\",\"type\":\"button\",\"validCmds\":[\"on\",\"off\",\"getState\"],\"meta\":{\"usage\":\"Mains Relay\"}},{\"device\":\"c6d2a817-0c3a-4b6f-8478-cd81628a63f5\",\"type\":\"virtual\",\"validCmds\":[\"read\"],\"meta\":{\"metric\":\"Temp & Humidity\",\"unit\":\"celsius & % relative humidity\"}}]]",
+		"payloadType": "json",
+		"repeat": "",
+		"crontab": "",
+		"once": false,
+		"x": 95,
+		"y": 518,
+		"wires": [
+			[
+				"dce0c0a4.a48c5"
+			]
+		]
+	},
+	{
+		"id": "a9854b7b.c42b08",
+		"type": "debug",
+		"z": "ff28ec38.b628",
+		"name": "READINGS",
+		"active": false,
+		"console": "false",
+		"complete": "payload",
+		"x": 880,
+		"y": 450,
+		"wires": []
+	},
+	{
+		"id": "a042ff33.82755",
+		"type": "function",
+		"z": "ff28ec38.b628",
+		"name": "device reading to insert",
+		"func": "// let readLen = msg.payload.length;\n// if (readLen <= 2 ) {\n//     return msg;\n// }\nlet config = flow.get(\"devicesConfig\");\nlet r = msg.payload[1];\nmsg.payload.length = 0; // setup for later\n// extract the values, create an insert objeect\n// for InfluxDB (or, RRD, if you like, via the\n// exec node on the pallet).\nlet device = ( map ) => {\n\tfor ( let x = 0; x < map.length; x++ ) {\n\t\tif ( map[ x ].device === r.device ) {\n\t\t\treturn map[ x ];\n\t\t}\n\t}\n};\nlet d = device( config );\n\t// now d is our thing...\nif (d.meta.keys) {\n//[ { name: \"rh\", metric: \"% humidity\" },\n//{ name: \"temp\", metric: \"temperature\"}]\n   d.meta.keys.forEach((k) => {\n       msg.payload.push( {\n           measurement: k.metric,\n           fields: {\n               [k.name]: r.value[k.name]\n           },\n           tags: {\n               uuid: r.device,\n               unit: k.unit\n               // add location, and other useful tags here\n               }\n       } );\n   });\n} else { \n    msg.payload.push( {\n        measurement: d.meta.metric,\n        fields: {\n            [d.meta.name]: r.value\n        },\n        tags: {\n           uuid: r.device,\n           unit: d.meta.unit\n           // add location, and other useful tags here\n        }\n       }\n    );\n}\n\n\n\nreturn msg;",
+		"outputs": 1,
+		"noerr": 0,
+		"x": 660,
+		"y": 440,
+		"wires": [
+			[
+				"a9854b7b.c42b08",
+				"f66c3dfe.ad04e"
+			]
+		]
+	},
+	{
+		"id": "f66c3dfe.ad04e",
+		"type": "influxdb batch",
+		"z": "ff28ec38.b628",
+		"influxdb": "ee417548.3fffc8",
+		"precision": "",
+		"retentionPolicy": "",
+		"name": "",
+		"x": 880,
+		"y": 410,
+		"wires": []
+	},
+	{
+		"id": "e6ea009.86761",
+		"type": "websocket-listener",
+		"z": "",
+		"path": "/ws/device",
+		"wholemsg": "false"
+	},
+	{
+		"id": "ee417548.3fffc8",
+		"type": "influxdb",
+		"z": "ff28ec38.b628",
+		"hostname": "localhost",
+		"port": "8086",
+		"protocol": "http",
+		"database": "environ",
+		"name": "Garden DB",
+		"usetls": false,
+		"tls": ""
+	}
 ]
