@@ -235,7 +235,6 @@ function msgParse( msg ) {
 	{
 		WebSock.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
 		break;
-		// parse config stuff...
 	}
 	default:
 		break;
