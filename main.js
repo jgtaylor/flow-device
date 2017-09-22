@@ -13,104 +13,105 @@ const VERSION = "1.74",
 		D7: D13,
 		D8: D15
 	},
-	configMap = [ {
-		id: "dccbaa81-b2e4-46e4-a2f4-84d398dd86e3",
-		pin: function ( cmd ) {
-			I2C1.setup( {
-				scl: D5,
-				sda: D4
-			} );
-			var lux = require( "BH1750" )
-				.connect( I2C1 );
-			lux.start( 1 );
-			switch ( cmd ) {
-			case "read":
-			{
+	server = "192.168.0.41";
+configMap = [ {
+	id: "dccbaa81-b2e4-46e4-a2f4-84d398dd86e3",
+	pin: function ( cmd ) {
+		I2C1.setup( {
+			scl: D5,
+			sda: D4
+		} );
+		var lux = require( "BH1750" )
+			.connect( I2C1 );
+		lux.start( 1 );
+		switch ( cmd ) {
+		case "read":
+		{
+			let x = lux.read()
+				.toString();
+			WebSock.send( JSON.stringify( [ "reading", {
+				device: this.id,
+				value: x
+			} ] ) );
+			break;
+		}
+		case "readCont":
+		{
+			let thisRead = setInterval( () => {
 				let x = lux.read()
 					.toString();
 				WebSock.send( JSON.stringify( [ "reading", {
 					device: this.id,
 					value: x
 				} ] ) );
-				break;
-			}
-			case "readCont":
-			{
-				let thisRead = setInterval( () => {
-					let x = lux.read()
-						.toString();
-					WebSock.send( JSON.stringify( [ "reading", {
-						device: this.id,
-						value: x
-					} ] ) );
-				}, 1000 );
-				let thisTimeout = setTimeout( function () {
-					clearInterval( thisRead );
-				}, 30000 );
-				WebSock.on( "close", () => {
-					clearInterval( thisRead );
-					clearTimeout( thisTimeout );
-				} );
-				break;
-			}
-			default:
-				break;
+			}, 1000 );
+			let thisTimeout = setTimeout( function () {
+				clearInterval( thisRead );
+			}, 30000 );
+			WebSock.on( "close", () => {
+				clearInterval( thisRead );
+				clearTimeout( thisTimeout );
+			} );
+			break;
+		}
+		default:
+			break;
 
-			}
-		},
-		type: "virtual",
-		validCmds: [ "read", "readCont" ],
-		meta: {
-			name: "light",
-			metric: "light",
-			unit: "lux"
 		}
-	}, {
-		id: "828fbaa2-4f56-4cc5-99bf-57dcb5bd85f5",
-		pin: wemos.D5,
-		type: "button",
-		validCmds: [ "on", "off", "getState" ],
-		meta: {
-			usage: "Mains Relay"
+	},
+	type: "virtual",
+	validCmds: [ "read", "readCont" ],
+	meta: {
+		name: "light",
+		metric: "light",
+		unit: "lux"
+	}
+}, {
+	id: "828fbaa2-4f56-4cc5-99bf-57dcb5bd85f5",
+	pin: wemos.D5,
+	type: "button",
+	validCmds: [ "on", "off", "getState" ],
+	meta: {
+		usage: "Mains Relay"
+	}
+}, {
+	id: "c6d2a817-0c3a-4b6f-8478-cd81628a63f5",
+	pin: function ( cmd ) {
+		var dht = require( "DHT22" )
+			.connect( wemos.D7 );
+		switch ( cmd ) {
+		case "read":
+		{
+			dht.read( ( data ) => {
+				WebSock.send( JSON.stringify( [ "reading", {
+					device: this.id,
+					value: data
+				} ] ) );
+			} );
+			break;
 		}
-	}, {
-		id: "c6d2a817-0c3a-4b6f-8478-cd81628a63f5",
-		pin: function ( cmd ) {
-			var dht = require( "DHT22" )
-				.connect( wemos.D7 );
-			switch ( cmd ) {
-			case "read":
-			{
-				dht.read( ( data ) => {
-					WebSock.send( JSON.stringify( [ "reading", {
-						device: this.id,
-						value: data
-					} ] ) );
-				} );
-				break;
-			}
-			default:
-				break;
-			}
-		},
-		type: "virtual",
-		validCmds: [ "read" ],
-		meta: {
-			keys: [ {
-				name: "rh",
-				metric: "humidity",
-				unit: "%"
-			}, {
-				name: "temp",
-				metric: "temperature",
-				unit: "C",
-				validMax: 85,
-				validMin: -20
-			} ],
-			deviceName: "DHT22"
+		default:
+			break;
 		}
-	} ],
-	WebSocket = require( "ws" );
+	},
+	type: "virtual",
+	validCmds: [ "read" ],
+	meta: {
+		keys: [ {
+			name: "rh",
+			metric: "humidity",
+			unit: "%"
+		}, {
+			name: "temp",
+			metric: "temperature",
+			unit: "C",
+			validMax: 85,
+			validMin: -20
+		} ],
+		deviceName: "DHT22"
+	}
+} ],
+WebSocket = require( "ws" );
 var WebSock = {};
 
 function configGen( config ) {
@@ -248,8 +249,8 @@ function WebSockconnect( state ) {
 		WebSock.removeAllListeners();
 		WebSock = null;
 	}
-	WebSock = new WebSocket( "192.168.0.116", {
-		path: "/ws/josh",
+	WebSock = new WebSocket( server, {
+		path: "/ws/device",
 		port: 1880,
 		origin: "MCU",
 		keepAlive: 60
