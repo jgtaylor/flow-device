@@ -27,8 +27,7 @@ configMap = [ {
 		switch ( cmd ) {
 		case "read":
 		{
-			let x = lux.read()
-				.toString();
+			let x = lux.read();
 			WebSock.send( JSON.stringify( [ "reading", {
 				device: this.id,
 				value: x
@@ -38,8 +37,7 @@ configMap = [ {
 		case "readCont":
 		{
 			let thisRead = setInterval( () => {
-				let x = lux.read()
-					.toString();
+				let x = lux.read();
 				WebSock.send( JSON.stringify( [ "reading", {
 					device: this.id,
 					value: x
