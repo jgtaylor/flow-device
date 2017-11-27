@@ -13,7 +13,7 @@ const VERSION = "1.74",
 		D7: D13,
 		D8: D15
 	},
-	server = "192.168.0.41",
+	server = "192.168.1.36",
 	configMap = [ {
 		id: "dccbaa81-b2e4-46e4-a2f4-84d398dd86e3",
 		pin: function ( cmd ) {
