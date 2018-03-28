@@ -1,120 +1,122 @@
-const VERSION = "0.01";
-const w = require( "Wifi" );
-const SSID = "X11";
-const ssidPassword = "secret99";
-const server = "192.168.1.36";
-const configMap = [ {
-	id: "bme280",
-	pin: function ( cmd ) {
-		var bme = require( "BME280" )
-			.connect( I2C1 );
-		switch ( cmd ) {
-		case "read":
-		{
-			let x = bme.getData();
-			WebSock.send( JSON.stringify( [ "reading", {
-				device: this.id,
-				value: x
-			} ] ) );
-			break;
-		}
-		default:
-			break;
+const VERSION = "0.01",
+	w = require( "Wifi" ),
+	SSID = "X11",
+	ssidPassword = "secret99",
+	server = "192.168.1.36",
+	configMap = [ {
+		id: "bme280",
+		pin: function ( cmd ) {
 
+			switch ( cmd ) {
+			case "read":
+			{
+				let x = bme.getData();
+				WebSock.send( JSON.stringify( [ "reading", {
+					device: this.id,
+					value: x
+				} ] ) );
+				break;
+			}
+			default:
+				break;
+
+			}
+		},
+		type: "virtual",
+		validCmds: [ "read" ],
+		meta: {
+			keys: [ {
+				name: "humidity",
+				metric: "humidity",
+				unit: "%"
+			}, {
+				name: "temp",
+				metric: "temp",
+				unit: "C",
+				validMax: 85,
+				validMin: -20
+			}, {
+				name: "pressure",
+				metric: "pressure",
+				unit: "hPa"
+			} ],
+			deviceName: "bme280"
 		}
-	},
-	type: "virtual",
-	validCmds: [ "read" ],
-	meta: {
-		keys: [ {
-			name: "humidity",
-			metric: "humidity",
-			unit: "%"
-		}, {
-			name: "temp",
-			metric: "temp",
-			unit: "C",
-			validMax: 85,
-			validMin: -20
-		}, {
-			name: "pressure",
-			metric: "pressure",
-			unit: "hPa"
-		} ],
-		deviceName: "bme280"
-	}
-}, {
-	id: "one",
-	pin: D13,
-	type: "button",
-	validCmds: [ "on", "off", "getState" ],
-	meta: {
-		usage: "Mains Relay"
-	}
-}, {
-	id: "two",
-	pin: D15,
-	type: "button",
-	validCmds: [ "on", "off", "getState" ],
-	meta: {
-		usage: "Mains Relay"
-	}
-}, {
-	id: "three",
-	pin: D2,
-	type: "button",
-	validCmds: [ "on", "off", "getState" ],
-	meta: {
-		usage: "Mains Relay"
-	}
-}, {
-	id: "four",
-	pin: D0,
-	type: "button",
-	validCmds: [ "on", "off", "getState" ],
-	meta: {
-		usage: "Mains Relay"
-	}
-}, {
-	id: "five",
-	pin: D4,
-	type: "button",
-	validCmds: [ "on", "off", "getState" ],
-	meta: {
-		usage: "Mains Relay"
-	}
-}, {
-	id: "six",
-	pin: D5,
-	type: "button",
-	validCmds: [ "on", "off", "getState" ],
-	meta: {
-		usage: "Mains Relay"
-	}
-}, {
-	id: "seven",
-	pin: D18,
-	type: "button",
-	validCmds: [ "on", "off", "getState" ],
-	meta: {
-		usage: "Mains Relay"
-	}
-}, {
-	id: "eight",
-	pin: D23,
-	type: "button",
-	validCmds: [ "on", "off", "getState" ],
-	meta: {
-		usage: "Mains Relay"
-	}
-} ];
+	}, {
+		id: "one",
+		pin: D13,
+		type: "button",
+		validCmds: [ "on", "off", "getState" ],
+		meta: {
+			usage: "Mains Relay"
+		}
+	}, {
+		id: "two",
+		pin: D15,
+		type: "button",
+		validCmds: [ "on", "off", "getState" ],
+		meta: {
+			usage: "Mains Relay"
+		}
+	}, {
+		id: "three",
+		pin: D2,
+		type: "button",
+		validCmds: [ "on", "off", "getState" ],
+		meta: {
+			usage: "Mains Relay"
+		}
+	}, {
+		id: "four",
+		pin: D0,
+		type: "button",
+		validCmds: [ "on", "off", "getState" ],
+		meta: {
+			usage: "Mains Relay"
+		}
+	}, {
+		id: "five",
+		pin: D4,
+		type: "button",
+		validCmds: [ "on", "off", "getState" ],
+		meta: {
+			usage: "Mains Relay"
+		}
+	}, {
+		id: "six",
+		pin: D5,
+		type: "button",
+		validCmds: [ "on", "off", "getState" ],
+		meta: {
+			usage: "Mains Relay"
+		}
+	}, {
+		id: "seven",
+		pin: D18,
+		type: "button",
+		validCmds: [ "on", "off", "getState" ],
+		meta: {
+			usage: "Mains Relay"
+		}
+	}, {
+		id: "eight",
+		pin: D23,
+		type: "button",
+		validCmds: [ "on", "off", "getState" ],
+		meta: {
+			usage: "Mains Relay"
+		}
+	} ];
 const WebSocket = require( "ws" );
 const relays = [ D13, D15, D2, D0, D4, D5, D18, D23 ];
 var WebSock = {};
-I2C1.setup( {
+I2C2.setup( {
 	scl: D17,
-	sda: D16
+	sda: D16,
+	bitrate: 100000
 } );
+var bme = require( "BME280" )
+	.connect( I2C2 );
 
 
 
@@ -180,7 +182,7 @@ function dimmer( d, cmd ) {
 	case "read":
 		{
 			WebSock.send( JSON.stringify( [ "reading", {
-				device: d.device,
+				device: d.id,
 				value: analogRead()
 			} ] ) );
 		}
@@ -189,9 +191,10 @@ function dimmer( d, cmd ) {
 
 		break;
 	default:
+		analogRead();
+		break;
 
 	}
-	analogRead();
 	// on ESP8266, only one pin is analog, so it's not named.
 	// TODO: implement this in the configMap device, so it can have a read
 	// or write. Note that write is only simulated via toggeling a gpio.
@@ -275,7 +278,7 @@ function WebSockconnect( state ) {
 
 E.on( "init", () => {
 	console.log( "Started " + VERSION + ": Connecting..." );
-
+	w.stopAP();
 	w.on( "connected", ( details ) => {
 		//w.save();
 		console.log( details );
