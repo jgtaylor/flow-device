@@ -1,24 +1,22 @@
-const VERSION = "0.01",
-	w = require( "Wifi" ),
+const server = "192.168.1.36",
 	SSID = "X11",
 	ssidPassword = "secret99",
-	server = "192.168.1.36",
 	configMap = [ {
 		id: "bme280",
 		pin: function ( cmd ) {
 
 			switch ( cmd ) {
-			case "read":
-			{
-				let x = bme.getData();
-				WebSock.send( JSON.stringify( [ "reading", {
-					device: this.id,
-					value: x
-				} ] ) );
-				break;
-			}
-			default:
-				break;
+				case "read":
+					{
+						let x = bme.getData();
+						WebSock.send( JSON.stringify( [ "reading", {
+							device: this.id,
+							value: x
+						} ] ) );
+						break;
+					}
+				default:
+					break;
 
 			}
 		},
@@ -110,13 +108,14 @@ const VERSION = "0.01",
 const WebSocket = require( "ws" );
 const relays = [ D13, D15, D2, D0, D4, D5, D18, D23 ];
 var WebSock = {};
-I2C2.setup( {
+
+I2C1.setup( {
 	scl: D17,
 	sda: D16,
 	bitrate: 100000
 } );
 var bme = require( "BME280" )
-	.connect( I2C2 );
+	.connect( I2C1 );
 
 
 
@@ -139,60 +138,60 @@ function button( d, cmd ) {
 		d.pin.mode( "output" );
 	}
 	switch ( cmd ) {
-	case "on":
-	{
-		digitalWrite( d.pin, 1 );
-		let retMsg = [ "state", {
-			device: d.id,
-			mode: d.pin.getMode(),
-			value: d.pin.read()
-		} ];
-		WebSock.send( JSON.stringify( retMsg ) );
-		break;
-	}
-	case "off":
-	{
-		digitalWrite( d.pin, 0 );
-		let retMsg = [ "state", {
-			device: d.id,
-			mode: d.pin.getMode(),
-			value: d.pin.read()
-		} ];
-		WebSock.send( JSON.stringify( retMsg ) );
-		break;
-	}
-	case "getState":
-	{
-		WebSock.send( JSON.stringify( [ "state", {
-			device: d.id,
-			mode: d.pin.getMode(),
-			value: d.pin.read()
-		} ] ) );
-		break;
-	}
-	default:
-	{
-		break;
-	}
+		case "on":
+			{
+				digitalWrite( d.pin, 1 );
+				let retMsg = [ "state", {
+					device: d.id,
+					mode: d.pin.getMode(),
+					value: d.pin.read()
+				} ];
+				WebSock.send( JSON.stringify( retMsg ) );
+				break;
+			}
+		case "off":
+			{
+				digitalWrite( d.pin, 0 );
+				let retMsg = [ "state", {
+					device: d.id,
+					mode: d.pin.getMode(),
+					value: d.pin.read()
+				} ];
+				WebSock.send( JSON.stringify( retMsg ) );
+				break;
+			}
+		case "getState":
+			{
+				WebSock.send( JSON.stringify( [ "state", {
+					device: d.id,
+					mode: d.pin.getMode(),
+					value: d.pin.read()
+				} ] ) );
+				break;
+			}
+		default:
+			{
+				break;
+			}
 	}
 }
 
 function dimmer( d, cmd ) {
 	switch ( cmd ) {
-	case "read":
-		{
-			WebSock.send( JSON.stringify( [ "reading", {
-				device: d.id,
-				value: analogRead()
-			} ] ) );
-		}
-		break;
-	case "expression":
+		case "read":
+			{
+				WebSock.send( JSON.stringify( [ "reading", {
+					device: d.id,
+					value: analogRead()
+				} ] ) );
+			}
+			break;
+		case "expression":
 
-		break;
-	default:
-		analogRead();
-		break;
+			break;
+		default:
+			analogRead();
+			break;
 
 	}
 	// on ESP8266, only one pin is analog, so it's not named.
@@ -215,44 +214,43 @@ function msgParse( msg ) {
 		}
 	}
 	switch ( m[ 0 ] ) {
-	case "cmd":
-	{
-		let d = device( configMap );
-		switch ( d.type ) {
-		case "button":
-		{
-			button( d, m[ 1 ].cmd );
-			break;
-		}
-		case "virtual":
-		{
-			virtual( d, m[ 1 ].cmd );
-			break;
-		}
-		case "dimmer":
-		{
-			dimmer( d, m[ 1 ].cmd );
-			break;
-		}
+		case "cmd":
+			{
+				let d = device( configMap );
+				switch ( d.type ) {
+					case "button":
+						{
+							button( d, m[ 1 ].cmd );
+							break;
+						}
+					case "virtual":
+						{
+							virtual( d, m[ 1 ].cmd );
+							break;
+						}
+					case "dimmer":
+						{
+							dimmer( d, m[ 1 ].cmd );
+							break;
+						}
+					default:
+						break;
+				}
+				break;
+			}
+		case "config":
+			{
+				WebSock.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
+				break;
+			}
 		default:
 			break;
-		}
-		break;
-	}
-	case "config":
-	{
-		WebSock.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
-		break;
-	}
-	default:
-		break;
 
 	}
 }
 
 
 function WebSockconnect( state ) {
-	console.log( "Creating the websocket..." );
 	if ( state === 1 ) {
 		WebSock.removeAllListeners();
 		WebSock = null;
@@ -263,35 +261,33 @@ function WebSockconnect( state ) {
 		origin: "MCU",
 		keepAlive: 60
 	} );
+	WebSock.on( "error", ( err ) => {
+		setTimeout( function () {
+			WebSockconnect( 1 );
+		}, 10000 ); // 10 seconds between reconnect attempts.
+	} );
 	WebSock.on( "open", () => {
 		WebSock.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
-		console.log( "[SUCCESS] WebSocket connected." );
 	} );
 	WebSock.on( "close", () => {
-		console.log( "[ERROR] WebSocket closed - reconnecting..." );
 		WebSockconnect( 1 );
 	} );
 	WebSock.on( "message", ( msg ) => {
 		msgParse( msg.toString() );
 	} );
+
 }
 
 E.on( "init", () => {
-	console.log( "Started " + VERSION + ": Connecting..." );
+	var w = require( "Wifi" );
 	w.stopAP();
-	w.on( "connected", ( details ) => {
-		//w.save();
-		console.log( details );
-	} );
-	w.on( "disconnected", ( details ) => {
-		console.log( "Wifi disconnected:" + details );
+	w.on( "disconnected", () => {
 		w.connect( SSID, {
 			password: ssidPassword
 		}, function ( error ) {
 			console.log( error );
 		} );
 	} );
-	console.log( "Reseting all relays to Off" );
 	relays.forEach( ( d ) => {
 		d.mode( "output" );
 		d.write( 0 );
