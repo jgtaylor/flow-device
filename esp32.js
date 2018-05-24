@@ -105,6 +105,7 @@ const server = "192.168.1.36",
 			usage: "Mains Relay"
 		}
 	} ];
+var w = require( "Wifi" );
 const WebSocket = require( "ws" );
 const relays = [ D13, D15, D2, D0, D4, D5, D18, D23 ];
 var WebSock = {};
@@ -279,13 +280,13 @@ function WebSockconnect( state ) {
 }
 
 E.on( "init", () => {
-	var w = require( "Wifi" );
 	w.stopAP();
 	w.on( "disconnected", () => {
 		w.connect( SSID, {
 			password: ssidPassword
 		}, function ( error ) {
 			console.log( error );
+			w.startAP();
 		} );
 	} );
 	relays.forEach( ( d ) => {
@@ -299,6 +300,8 @@ E.on( "init", () => {
 		if ( error ) {
 			console.log( error );
 		}
+	} );
+	w.on( "connected", function () {
 		WebSockconnect( 0 );
 	} );
 } );
