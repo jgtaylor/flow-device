@@ -289,6 +289,9 @@ E.on( "init", () => {
 			w.startAP();
 		} );
 	} );
+	w.on( "connected", function () {
+		WebSockconnect( 0 );
+	} );
 	relays.forEach( ( d ) => {
 		d.mode( "output" );
 		d.write( 0 );
@@ -299,9 +302,8 @@ E.on( "init", () => {
 	}, ( error ) => {
 		if ( error ) {
 			console.log( error );
+			w.startAP();
 		}
 	} );
-	w.on( "connected", function () {
-		WebSockconnect( 0 );
-	} );
+
 } );
