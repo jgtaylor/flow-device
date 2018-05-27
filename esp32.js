@@ -104,6 +104,19 @@ const server = "192.168.1.36",
 		meta: {
 			usage: "Mains Relay"
 		}
+	}, {
+		id: "pwm1",
+		pin: D25,
+		type: "dimmer",
+		validCmds: [ "read", "write" ],
+		meta: {
+			keys: [ {
+				name: "Exhaust Fan",
+				metric: "Fan_Speed",
+				unit: "%"
+			} ],
+			deviceName: "Fan_Speed"
+		}
 	} ];
 var w = require( "Wifi" );
 const WebSocket = require( "ws" );
@@ -177,7 +190,7 @@ function button( d, cmd ) {
 	}
 }
 
-function dimmer( d, cmd ) {
+function dimmer( d, cmd, cmdObject ) {
 	switch ( cmd ) {
 		case "read":
 			{
@@ -187,7 +200,21 @@ function dimmer( d, cmd ) {
 				} ] ) );
 			}
 			break;
-		case "expression":
+		case "write":
+			{
+				if ( !cmdObject ) {
+					return false;
+				}
+				if ( !cmdObject.value ) {
+					return false;
+				}
+				if ( !cmdObject.options ) {
+					cmdObject.options = {
+						freq: 5000
+					};
+				}
+				analogWrite( d.pin, cmdObject.value, cmdObject.options );
+			}
 
 			break;
 		default:
@@ -195,9 +222,6 @@ function dimmer( d, cmd ) {
 			break;
 
 	}
-	// on ESP8266, only one pin is analog, so it's not named.
-	// TODO: implement this in the configMap device, so it can have a read
-	// or write. Note that write is only simulated via toggeling a gpio.
 }
 
 function virtual( d, cmd ) {
@@ -231,7 +255,7 @@ function msgParse( msg ) {
 						}
 					case "dimmer":
 						{
-							dimmer( d, m[ 1 ].cmd );
+							dimmer( d, m[ 1 ].cmd, m[ 1 ] );
 							break;
 						}
 					default:
