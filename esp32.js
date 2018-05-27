@@ -115,7 +115,20 @@ const server = "192.168.1.36",
 				metric: "Fan_Speed",
 				unit: "%"
 			} ],
-			deviceName: "Fan_Speed"
+			deviceName: "Fan_Speed_1"
+		}
+	}, {
+		id: "pwm2",
+		pin: D26,
+		type: "dimmer",
+		validCmds: [ "read", "write" ],
+		meta: {
+			keys: [ {
+				name: "ExhaustFan",
+				metric: "Fan_Speed",
+				unit: "%"
+			} ],
+			deviceName: "Fan_Speed_2"
 		}
 	} ];
 var w = require( "Wifi" );
