@@ -1,4 +1,4 @@
-const server = "192.168.1.36",
+var server = "192.168.2.122",
 	SSID = "X11",
 	ssidPassword = "secret99",
 	configMap = [ {
@@ -6,17 +6,17 @@ const server = "192.168.1.36",
 		pin: function ( cmd ) {
 
 			switch ( cmd ) {
-				case "read":
-					{
-						let x = bme.getData();
-						WebSock.send( JSON.stringify( [ "reading", {
-							device: this.id,
-							value: x
-						} ] ) );
-						break;
-					}
-				default:
-					break;
+			case "read":
+			{
+				let x = bme.getData();
+				WebSock.send( JSON.stringify( [ "reading", {
+					device: this.id,
+					value: x
+				} ] ) );
+				break;
+			}
+			default:
+				break;
 
 			}
 		},
@@ -59,14 +59,6 @@ const server = "192.168.1.36",
 	}, {
 		id: "three",
 		pin: D2,
-		type: "button",
-		validCmds: [ "on", "off", "getState" ],
-		meta: {
-			usage: "Mains Relay"
-		}
-	}, {
-		id: "four",
-		pin: D0,
 		type: "button",
 		validCmds: [ "on", "off", "getState" ],
 		meta: {
@@ -132,8 +124,8 @@ const server = "192.168.1.36",
 		}
 	} ];
 var w = require( "Wifi" );
-const WebSocket = require( "ws" );
-const relays = [ D13, D15, D2, D0, D4, D5, D18, D23 ];
+var WebSocket = require( "ws" );
+var relays = [ D13, D15, D2, D4, D5, D18, D23 ];
 var WebSock = {};
 
 I2C1.setup( {
@@ -165,74 +157,74 @@ function button( d, cmd ) {
 		d.pin.mode( "output" );
 	}
 	switch ( cmd ) {
-		case "on":
-			{
-				digitalWrite( d.pin, 1 );
-				let retMsg = [ "state", {
-					device: d.id,
-					mode: d.pin.getMode(),
-					value: d.pin.read()
-				} ];
-				WebSock.send( JSON.stringify( retMsg ) );
-				break;
-			}
-		case "off":
-			{
-				digitalWrite( d.pin, 0 );
-				let retMsg = [ "state", {
-					device: d.id,
-					mode: d.pin.getMode(),
-					value: d.pin.read()
-				} ];
-				WebSock.send( JSON.stringify( retMsg ) );
-				break;
-			}
-		case "getState":
-			{
-				WebSock.send( JSON.stringify( [ "state", {
-					device: d.id,
-					mode: d.pin.getMode(),
-					value: d.pin.read()
-				} ] ) );
-				break;
-			}
-		default:
-			{
-				break;
-			}
+	case "on":
+	{
+		digitalWrite( d.pin, 1 );
+		let retMsg = [ "state", {
+			device: d.id,
+			mode: d.pin.getMode(),
+			value: d.pin.read()
+		} ];
+		WebSock.send( JSON.stringify( retMsg ) );
+		break;
+	}
+	case "off":
+	{
+		digitalWrite( d.pin, 0 );
+		let retMsg = [ "state", {
+			device: d.id,
+			mode: d.pin.getMode(),
+			value: d.pin.read()
+		} ];
+		WebSock.send( JSON.stringify( retMsg ) );
+		break;
+	}
+	case "getState":
+	{
+		WebSock.send( JSON.stringify( [ "state", {
+			device: d.id,
+			mode: d.pin.getMode(),
+			value: d.pin.read()
+		} ] ) );
+		break;
+	}
+	default:
+	{
+		break;
+	}
 	}
 }
 
 function dimmer( d, cmd, cmdObject ) {
 	switch ( cmd ) {
-		case "read":
-			{
-				WebSock.send( JSON.stringify( [ "reading", {
-					device: d.id,
-					value: analogRead()
-				} ] ) );
+	case "read":
+		{
+			WebSock.send( JSON.stringify( [ "reading", {
+				device: d.id,
+				value: analogRead()
+			} ] ) );
+		}
+		break;
+	case "write":
+		{
+			if ( !cmdObject ) {
+				return false;
 			}
-			break;
-		case "write":
-			{
-				if ( !cmdObject ) {
-					return false;
-				}
-				if ( !cmdObject.value ) {
-					return false;
-				}
-				if ( !cmdObject.options ) {
-					cmdObject.options = {
-						freq: 5000
-					};
-				}
-				analogWrite( d.pin, cmdObject.value, cmdObject.options );
+			if ( !cmdObject.value ) {
+				return false;
 			}
+			if ( !cmdObject.options ) {
+				cmdObject.options = {
+					freq: 5000
+				};
+			}
+			analogWrite( d.pin, cmdObject.value, cmdObject.options );
+		}
 
-			break;
-		default:
-			analogRead();
-			break;
+		break;
+	default:
+		analogRead();
+		break;
 
 	}
 }
@@ -252,37 +244,37 @@ function msgParse( msg ) {
 		}
 	}
 	switch ( m[ 0 ] ) {
-		case "cmd":
-			{
-				let d = device( configMap );
-				switch ( d.type ) {
-					case "button":
-						{
-							button( d, m[ 1 ].cmd );
-							break;
-						}
-					case "virtual":
-						{
-							virtual( d, m[ 1 ].cmd );
-							break;
-						}
-					case "dimmer":
-						{
-							dimmer( d, m[ 1 ].cmd, m[ 1 ] );
-							break;
-						}
-					default:
-						break;
-				}
-				break;
-			}
-		case "config":
-			{
-				WebSock.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
-				break;
-			}
+	case "cmd":
+	{
+		let d = device( configMap );
+		switch ( d.type ) {
+		case "button":
+		{
+			button( d, m[ 1 ].cmd );
+			break;
+		}
+		case "virtual":
+		{
+			virtual( d, m[ 1 ].cmd );
+			break;
+		}
+		case "dimmer":
+		{
+			dimmer( d, m[ 1 ].cmd, m[ 1 ] );
+			break;
+		}
 		default:
 			break;
+		}
+		break;
+	}
+	case "config":
+	{
+		WebSock.send( JSON.stringify( [ "config", configGen( configMap ) ] ) );
+		break;
+	}
+	default:
+		break;
 
 	}
 }
